@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "458034191891",
+    "firebase_url": "https://zebratime-fd1a7.firebaseio.com",
+    "project_id": "zebratime-fd1a7",
+    "storage_bucket": "zebratime-fd1a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458034191891:android:654a1a2c19e68aa7",
+        "android_client_info": {
+          "package_name": "com.androidacademy.team5.zebratime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458034191891-ipsudtbl37imj7ia7r1u1g97rhealml6.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "458034191891-ipsudtbl37imj7ia7r1u1g97rhealml6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCf8ZZoVwD6T95XVzUmlf2mC1NCmxJn04"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
