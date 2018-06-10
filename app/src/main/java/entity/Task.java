@@ -20,9 +20,9 @@ public class Task {
     public String getId() {
         return id;
     }
-/*
-    private void addSessions(){
 
-    }*/
+    private void addSession(Session session){
+        sessions.add(session);
+    }
 }
 
