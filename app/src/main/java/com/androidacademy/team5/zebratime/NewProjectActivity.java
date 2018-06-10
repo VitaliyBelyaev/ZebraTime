@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class NewProjectActivity extends AppCompatActivity {
 
     @Override
@@ -16,7 +19,6 @@ public class NewProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_project);
 
         Button okBtn = (Button) findViewById(R.id.ok_button);
-        final EditText edTitle = (EditText) findViewById(R.id.ed_text);
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -27,8 +29,21 @@ public class NewProjectActivity extends AppCompatActivity {
 
                 Toast toast = Toast.makeText(context, text, duration);
 
-                if(edTitle.getText().toString().matches("")){
+                EditText edTitle = (EditText) findViewById(R.id.ed_text);
+                final String titleNewProject = edTitle.getText().toString();
+                if(titleNewProject.matches("")){
                     toast.show();
+                }
+                else
+                {
+
+                    FirebaseDatabase database =  FirebaseDatabase.getInstance();
+                    DatabaseReference mRef =  database.getReference().child("Projects");
+
+                    Project newProject = new Project(titleNewProject);
+
+                    newProject.setId(mRef.push().getKey());
+                    mRef.child(newProject.getId()).setValue(newProject);
                 }
             }
         });
