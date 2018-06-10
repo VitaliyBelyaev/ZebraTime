@@ -11,6 +11,12 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import entity.Project;
+import entity.Task;
+
 public class NewProjectActivity extends AppCompatActivity {
 
     @Override
@@ -39,11 +45,13 @@ public class NewProjectActivity extends AppCompatActivity {
 
                     FirebaseDatabase database =  FirebaseDatabase.getInstance();
                     DatabaseReference mRef =  database.getReference().child("Projects");
-
+                    ArrayList<Task> tasks = new ArrayList<>();
                     Project newProject = new Project(titleNewProject);
 
                     newProject.setId(mRef.push().getKey());
                     mRef.child(newProject.getId()).setValue(newProject);
+
+                    finish();
                 }
             }
         });

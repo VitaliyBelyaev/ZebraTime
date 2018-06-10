@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.androidacademy.team5.zebratime.domain.Project;
-import com.androidacademy.team5.zebratime.domain.Task;
 
 import java.util.List;
+
+import entity.Task;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH>{
 

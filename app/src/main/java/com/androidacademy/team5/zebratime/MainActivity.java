@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public void onProjectClick(String projectId) {
         drawerLayout.closeDrawer(Gravity.START);

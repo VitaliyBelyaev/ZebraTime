@@ -1,12 +1,23 @@
-package com.androidacademy.team5.zebratime;
+package entity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Project {
     String title;
     String id;
+    ArrayList<Task> tasks;
 
+
+    public Project(String title, String id, ArrayList<Task> tasks) {
+        this.title = title;
+        this.id = id;
+        this.tasks = tasks;
+    }
 
     public Project(String title) {
         this.title = title;
+
     }
 
     public String getTitle() {

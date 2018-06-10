@@ -14,9 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.androidacademy.team5.zebratime.ProjectsAdapter.ProjectOnClickHandler;
-import com.androidacademy.team5.zebratime.domain.Project;
 
 import java.util.ArrayList;
+
+import entity.Project;
 
 public class AllProjectsFragment extends Fragment {
 
@@ -46,10 +47,10 @@ public class AllProjectsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         ArrayList<Project> projects = new ArrayList<>();
-        projects.add(new Project("1","Project 1"));
-        projects.add(new Project("2","Project 2"));
-        projects.add(new Project("3","Project 3"));
-        projects.add(new Project("4","Project 4"));
+        projects.add(new Project("sahdjs"));
+        projects.add(new Project("safsdgh"));
+        projects.add(new Project("safgasgg"));
+        projects.add(new Project("sagasf"));
 
         adapter.replaceWith(projects);
 

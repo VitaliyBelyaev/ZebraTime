@@ -13,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.androidacademy.team5.zebratime.TasksAdapter.TaskOnClickHandler;
-import com.androidacademy.team5.zebratime.domain.Task;
 
 import java.util.ArrayList;
+
+import entity.Task;
 
 public class ProjectFragment extends Fragment {
 
@@ -55,10 +56,10 @@ public class ProjectFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         final ArrayList<Task> tasks= new ArrayList<>();
-        tasks.add(new Task("1","Task 1"));
-        tasks.add(new Task("2","Project 2"));
-        tasks.add(new Task("3","Project 3"));
-        tasks.add(new Task("4","Project 4"));
+        tasks.add(new Task("1","Task 1", "comment1"));
+        tasks.add(new Task("2","Project 2", "comment2"));
+        tasks.add(new Task("3","Project 3", "comment3"));
+        tasks.add(new Task("4","Project 4", "comment4"));
 
         adapter.replaceWith(tasks);
         fab.setOnClickListener(new View.OnClickListener() {
