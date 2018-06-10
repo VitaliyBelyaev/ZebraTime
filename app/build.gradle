@@ -32,6 +32,7 @@ dependencies {
     
     implementation "com.android.support:appcompat-v7:${project.property('supportLib.version')}"
     implementation "com.google.firebase:firebase-core:${project.property('firebase.version')}"
+    implementation "com.google.firebase:firebase-database:${project.property('firebaseDatabase.version')}"
 
     testImplementation 'junit:junit:4.12'
 }
