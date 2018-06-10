@@ -21,7 +21,8 @@ public class NewTaskActivity extends AppCompatActivity {
     EditText textComment;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("Task");
+    DatabaseReference myRef = database.getReference("tasks");
+    DatabaseReference projectRefJ = database.getReference("Projects");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +34,15 @@ public class NewTaskActivity extends AppCompatActivity {
         btnOk = findViewById(R.id.btnOk);
         textTitle = findViewById(R.id.textTitle);
         textComment = findViewById(R.id.textComment);
-        final String projectId = "-LEdxQJNyoCMl1Dxh7A2";
+        final String projectId = "-LEe_57y7rc5VoR7mub2";
 
 
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     Task task = new Task(myRef.push().getKey(),textTitle.getText().toString(),textComment.getText().toString());
-                    DatabaseReference projectRef = myRef.child("Projects").equalTo(projectId,"id").getRef();
-                    projectRef.child("tasks").setValue(task);
+                    DatabaseReference projectRef = projectRefJ.child(projectId);
+                    projectRef.child("tasks").child(task.getId()).setValue(task);
                    // myRef.child(task.getId()).setValue(task);
                 }
         });
