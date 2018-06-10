@@ -1,14 +1,18 @@
 package com.androidacademy.team5.zebratime.entity;
 
+import java.util.ArrayList;
+
 public class Project {
     String title;
     String id;
+    ArrayList<Task> tasks;
 
-    public Project() {
-    }
+
+    public Project(){}
 
     public Project(String title) {
         this.title = title;
+
     }
 
     public String getTitle() {
