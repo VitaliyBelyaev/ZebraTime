@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.androidacademy.team5.zebratime.entity.Project;
+
 public class NewProjectActivity extends AppCompatActivity {
 
     @Override
@@ -44,6 +46,7 @@ public class NewProjectActivity extends AppCompatActivity {
 
                     newProject.setId(mRef.push().getKey());
                     mRef.child(newProject.getId()).setValue(newProject);
+                    finish();
                 }
             }
         });

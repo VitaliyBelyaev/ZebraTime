@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.androidacademy.team5.zebratime.entity.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import entity.Task;
 
 import static android.content.Intent.EXTRA_TEXT;
 
@@ -30,11 +30,11 @@ public class NewTaskActivity extends AppCompatActivity {
         setContentView(R.layout.task_screen);
 
 
-        //final String projectId = getIntent().getStringExtra(EXTRA_TEXT);
+        final String projectId = getIntent().getStringExtra(EXTRA_TEXT);
         btnOk = findViewById(R.id.btnOk);
         textTitle = findViewById(R.id.textTitle);
         textComment = findViewById(R.id.textComment);
-        final String projectId = "-LEe_57y7rc5VoR7mub2";
+
 
 
         btnOk.setOnClickListener(new View.OnClickListener() {
@@ -43,7 +43,7 @@ public class NewTaskActivity extends AppCompatActivity {
                     Task task = new Task(myRef.push().getKey(),textTitle.getText().toString(),textComment.getText().toString());
                     DatabaseReference projectRef = projectRefJ.child(projectId);
                     projectRef.child("tasks").child(task.getId()).setValue(task);
-                   // myRef.child(task.getId()).setValue(task);
+                    finish();
                 }
         });
 
