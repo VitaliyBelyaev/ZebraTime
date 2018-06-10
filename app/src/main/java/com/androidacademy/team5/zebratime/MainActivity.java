@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.left_container, allProjectsFragment)
                 .commit();
 
+        getApp().timer.start();
+
     }
 
     @Override
@@ -35,5 +37,9 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.main_container, projectFragment)
                 .commit();
 
+    }
+
+    private App getApp(){
+        return (App) getApplication();
     }
 }

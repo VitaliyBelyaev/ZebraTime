@@ -41,6 +41,7 @@ public class NewTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     Task task = new Task(myRef.push().getKey(),textTitle.getText().toString(),textComment.getText().toString());
+                    task.setIdProject(projectId);
                     DatabaseReference projectRef = projectRefJ.child(projectId);
                     projectRef.child("tasks").child(task.getId()).setValue(task);
                    // myRef.child(task.getId()).setValue(task);

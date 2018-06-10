@@ -7,10 +7,18 @@ public class Task {
     String id;
     String title;
     String comment;
+    String idProject;
     List<Session>sessions;
 
+    public String getIdProject() {
+        return idProject;
+    }
 
-    public Task(String id,String title, String comment) {
+    public void setIdProject(String idProject) {
+        this.idProject = idProject;
+    }
+
+    public Task(String id, String title, String comment) {
         this.id = id;
         this.title = title;
         this.comment = comment;
