@@ -4,4 +4,32 @@
     <string name="create_project">Create Project</string>
     <string name="enter_title">Enter title...</string>
     <string name="ok_button">Ok</string>
-</resources>
+    <string name="details_label">Detailed information</string>
+    <string name="settings_label">Settings</string>
+
+    <!--Menus-->
+    <string name="open_in_browser">Open in browser</string>
+    <string name="open_settings">Settings</string>
+
+    <!--Preferences-->
+    <string name="pref_default_work_time" translatable="false">25</string>
+    <string name="work_time_key" translatable="false">workTime</string>
+    <string name="work_time_title">Work time</string>
+
+    <string name="pref_default_short_rest" translatable="false">5</string>
+    <string name="short_rest_key" translatable="false">shortRest</string>
+    <string name="short_rest_title">Short break time</string>
+
+    <string name="pref_default_long_rest" translatable="false">15</string>
+    <string name="long_rest_key" translatable="false">longRest</string>
+    <string name="long_rest_title">Long break time</string>
+
+    <string name="pref_default_long_break_interval" translatable="false">4</string>
+    <string name="long_break_interval_key" translatable="false">longInterval</string>
+    <string name="long_break_interval_title">Long break interval</string>
+
+    <!--Details layout-->
+    <string name="dummy_title" translatable="false">Title</string>
+    <string name="dummy_date" translatable="false">Date</string>
+    <string name="dummy_text" translatable="false">Text</string>
+    </resources>
