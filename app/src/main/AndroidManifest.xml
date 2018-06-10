@@ -20,7 +20,7 @@
 
         <activity android:name=".NewTaskActivity"/>
         <activity android:name=".TimerActivity"/>
-        <activity android:name=".TimerPreferences"/>
+        <activity android:name=".TimerSettingsActivity"/>
     </application>
 
 </manifest>

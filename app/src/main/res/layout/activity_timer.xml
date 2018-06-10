@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:textSize="32sp"
             android:text="25:00"
             />
 
@@ -24,8 +25,28 @@
             android:id="@+id/action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:layout_gravity="center"
+            android:text="Action button"/>
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/task_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp">
+
+        <TextView
+            android:id="@+id/tv_timer_task_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task title"/>
+
+        <TextView
+            android:id="@+id/tv_timer_task_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="52"/>
 
     </LinearLayout>
 

@@ -7,19 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
+import com.androidacademy.team5.zebratime.entity.Task;
 
 import java.util.List;
-
-import com.androidacademy.team5.zebratime.entity.Task;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH>{
 
     private List<Task> tasks;
+    private String projectId;
     private TaskOnClickHandler onClickHandler;
 
     public interface TaskOnClickHandler{
-        void onTaskClick(String taskId);
+        void onTaskClick(String taskId, String projectId);
     }
 
     public void replaceWith(List<Task> tasks){
@@ -27,8 +26,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH>{
         notifyDataSetChanged();
     }
 
-    public TasksAdapter(TaskOnClickHandler onClickHandler) {
+    public TasksAdapter(TaskOnClickHandler onClickHandler, String projectId) {
         this.onClickHandler = onClickHandler;
+        this.projectId = projectId;
     }
 
     @NonNull
@@ -71,7 +71,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH>{
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    onClickHandler.onTaskClick(tasks.get(position).getId());
+                    onClickHandler.onTaskClick(tasks.get(position).getId(),projectId);
                 }
             });
         }
