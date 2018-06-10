@@ -17,6 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewProjectActivity"></activity>
+
+        <activity android:name=".NewTaskActivity"></activity>
+        <activity android:name=".TimerActivity"></activity>
     </application>
 
 </manifest>

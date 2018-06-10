@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.view.Gravity;
 
 public class MainActivity extends AppCompatActivity
-        implements ProjectsAdapter.ProjectOnClickHandler {
+        implements ProjectsAdapter.ProjectOnClickHandler,
+                   TasksAdapter.TaskOnClickHandler {
 
     private DrawerLayout drawerLayout;
 
@@ -30,11 +31,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProjectClick(String projectId) {
         drawerLayout.closeDrawer(Gravity.START);
-        ProjectFragment projectFragment = ProjectFragment.newInstance("1");
+        ProjectFragment projectFragment = ProjectFragment.newInstance(projectId);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_container, projectFragment)
                 .commit();
+
+    }
+
+    @Override
+    public void onTaskClick(String taskId) {
 
     }
 }

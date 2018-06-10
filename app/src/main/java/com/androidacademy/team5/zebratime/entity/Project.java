@@ -1,9 +1,11 @@
-package com.androidacademy.team5.zebratime;
+package com.androidacademy.team5.zebratime.entity;
 
 public class Project {
     String title;
     String id;
 
+    public Project() {
+    }
 
     public Project(String title) {
         this.title = title;

@@ -7,9 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.androidacademy.team5.zebratime.domain.Project;
 
 import java.util.List;
+
+import com.androidacademy.team5.zebratime.entity.Project;
 
 public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ProjectVH> {
 
