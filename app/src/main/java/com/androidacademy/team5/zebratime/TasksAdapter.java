@@ -8,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+
 import java.util.List;
 
-import entity.Task;
+import com.androidacademy.team5.zebratime.entity.Task;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH>{
 

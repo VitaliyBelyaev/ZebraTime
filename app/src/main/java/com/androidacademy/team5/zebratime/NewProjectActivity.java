@@ -11,11 +11,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import entity.Project;
-import entity.Task;
+import com.androidacademy.team5.zebratime.entity.Project;
 
 public class NewProjectActivity extends AppCompatActivity {
 
@@ -45,12 +41,11 @@ public class NewProjectActivity extends AppCompatActivity {
 
                     FirebaseDatabase database =  FirebaseDatabase.getInstance();
                     DatabaseReference mRef =  database.getReference().child("Projects");
-                    ArrayList<Task> tasks = new ArrayList<>();
+
                     Project newProject = new Project(titleNewProject);
 
                     newProject.setId(mRef.push().getKey());
                     mRef.child(newProject.getId()).setValue(newProject);
-
                     finish();
                 }
             }

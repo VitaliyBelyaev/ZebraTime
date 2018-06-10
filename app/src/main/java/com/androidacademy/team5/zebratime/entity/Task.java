@@ -1,5 +1,7 @@
 package entity;
 
+import com.androidacademy.team5.zebratime.entity.Session;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public class Task {
     String title;
     String comment;
     String idProject;
-    List<Session>sessions;
+    List<Session> sessions;
 
     public String getIdProject() {
         return idProject;
@@ -18,11 +20,17 @@ public class Task {
         this.idProject = idProject;
     }
 
-    public Task(String id, String title, String comment) {
+    public Task(){}
+
+    public Task(String id,String title, String comment) {
         this.id = id;
         this.title = title;
         this.comment = comment;
         this.sessions = new ArrayList();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setId(String id) {
@@ -49,16 +57,8 @@ public class Task {
         return sessions;
     }
 
-    public void setSessions(List<Session> sessions) {
-        this.sessions = sessions;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    private void addSession(Session session){
-        sessions.add(session);
+    public void addSession(Session session) {
+        this.sessions.add(session);
     }
 }
 

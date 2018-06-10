@@ -1,7 +1,6 @@
-package entity;
+package com.androidacademy.team5.zebratime.entity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Project {
     String title;
@@ -9,11 +8,7 @@ public class Project {
     ArrayList<Task> tasks;
 
 
-    public Project(String title, String id, ArrayList<Task> tasks) {
-        this.title = title;
-        this.id = id;
-        this.tasks = tasks;
-    }
+    public Project(){}
 
     public Project(String title) {
         this.title = title;

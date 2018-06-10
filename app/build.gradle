@@ -36,6 +36,7 @@ dependencies {
     implementation "com.android.support:design:${project.property('supportLib.version')}"
     implementation "com.android.support:recyclerview-v7:${project.property('supportLib.version')}"
     implementation "com.android.support:cardview-v7:${project.property('supportLib.version')}"
+    implementation "com.android.support:preference-v7:${project.property('supportLib.version')}"
 
     testImplementation 'junit:junit:4.12'
 }

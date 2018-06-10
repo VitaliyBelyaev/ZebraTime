@@ -19,7 +19,9 @@
         </activity>
         <activity android:name=".NewProjectActivity"></activity>
 
-        <activity android:name=".NewTaskActivity"></activity>
+        <activity android:name=".NewTaskActivity"/>
+        <activity android:name=".TimerActivity"/>
+        <activity android:name=".TimerPreferences"/>
     </application>
 
 </manifest>
