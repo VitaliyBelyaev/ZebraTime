@@ -35,6 +35,8 @@ subprojects {
             force "com.android.support:support-annotations:${project.property('supportLib.version')}"
             force "com.android.support:support-core-ui:${project.property('supportLib.version')}"
             force "com.android.support:support-media-compat:${project.property('supportLib.version')}"
+            force "com.android.support:support-core-utils:${project.property('supportLib.version')}"
+
         }
     }
 }

@@ -29,11 +29,14 @@ android {
 }
 
 dependencies {
-    
-    implementation "com.android.support:appcompat-v7:${project.property('supportLib.version')}"
-    implementation "com.google.firebase:firebase-core:${project.property('firebase.version')}"
 
-    testImplementation 'junit:junit:4.12'
+    implementation "com.google.firebase:firebase-core:${project.property('firebaseCore.version')}"
+    implementation "com.google.firebase:firebase-database:${project.property('firebaseDatabase.version')}"
+    implementation "com.android.support:appcompat-v7:${project.property('supportLib.version')}"
+    implementation "com.android.support:recyclerview-v7:${project.property('supportLib.version')}"
+    implementation "com.android.support:cardview-v7:${project.property('supportLib.version')}"
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
