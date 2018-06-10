@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ZebraTime</string>
+    <string name="title_project">Title</string>
+    <string name="create_project">Create Project</string>
+    <string name="enter_title">Enter title...</string>
+    <string name="ok_button">Ok</string>
 </resources>
