@@ -35,6 +35,7 @@ public class TimerActivity extends AppCompatActivity {
     private TextView taskDurationTextView;
     private Task task;
     private Timer timer;
+    private Button endTaskButton;
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference tasksRef = database.getReference("Tasks");
@@ -49,6 +50,9 @@ public class TimerActivity extends AppCompatActivity {
         actionButton = findViewById(R.id.action_button);
         taskTitleTextView = findViewById(R.id.tv_timer_task_title);
         taskDurationTextView = findViewById(R.id.tv_timer_task_duration);
+        endTaskButton = findViewById(R.id.end_task_button);
+
+        actionButton.setText("Start");
 
         if (timer.getTask() == null) {
             String projectId = getIntent().getStringExtra(PROJECT_ID);
@@ -78,7 +82,7 @@ public class TimerActivity extends AppCompatActivity {
             showTaskInfo(task);
         }
 
-        final CountDownTimer internalTimer = new CountDownTimer(30000, 1000) {
+        final CountDownTimer internalTimer = new CountDownTimer(50000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
@@ -88,6 +92,7 @@ public class TimerActivity extends AppCompatActivity {
             public void onFinish() {
                 timer.setState(OVERWORK);
                 actionButton.setText("Take break");
+                timeTextView.setText("00:05");
                 Log.i("TimerTest", "Done!");
             }
         };
@@ -101,9 +106,22 @@ public class TimerActivity extends AppCompatActivity {
 
             public void onFinish() {
                 timer.setState(STOP);
+                timeTextView.setText("00:30");
                 Log.i("TimerTest", "Done!");
             }
         };
+
+        endTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timer.setTask(null);
+                if(timer.getState() != STOP){
+                    timer.stop();
+                    timer.setState(STOP);
+                }
+                finish();
+            }
+        });
 
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,13 +133,14 @@ public class TimerActivity extends AppCompatActivity {
                         break;
                     case WORK:
                         actionButton.setText("START");
+                        timeTextView.setText("00:00");
                         timer.stop();
                         break;
                     case OVERWORK:
                         actionButton.setText("START");
                         timer.pause(breakTimer);
                     case PAUSE:
-                        actionButton.setText("STOP");
+                        actionButton.setText("START");
                         timer.start(internalTimer);
                 }
             }
