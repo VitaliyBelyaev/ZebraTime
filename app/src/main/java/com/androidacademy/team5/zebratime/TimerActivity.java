@@ -1,6 +1,7 @@
 package com.androidacademy.team5.zebratime;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -126,22 +127,39 @@ public class TimerActivity extends AppCompatActivity {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MyService.class);
                 switch(timer.getState()){
                     case STOP:
                         actionButton.setText("STOP");
                         timer.start(internalTimer);
+                        intent.setAction("Start");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        else startService(intent);
                         break;
                     case WORK:
                         actionButton.setText("START");
                         timeTextView.setText("00:00");
                         timer.stop();
+                        intent.setAction("Stop");
+                        startService(intent);
                         break;
                     case OVERWORK:
                         actionButton.setText("START");
                         timer.pause(breakTimer);
+                        intent.setAction("Stop");
+                        startService(intent);
+                        break;
                     case PAUSE:
                         actionButton.setText("START");
+                        intent.setAction("Start");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        else startService(intent);
                         timer.start(internalTimer);
+                        break;
                 }
             }
         });
