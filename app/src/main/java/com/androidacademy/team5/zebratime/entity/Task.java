@@ -7,7 +7,7 @@ public class Task {
     String id;
     String title;
     String comment;
-    List<Session>sessions;
+    List<Session> sessions;
 
 
     public Task(){}
@@ -49,6 +49,16 @@ public class Task {
 
     public void addSession(Session session) {
         this.sessions.add(session);
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", comment='" + comment + '\'' +
+                ", sessions=" + sessions +
+                '}';
     }
 }
 

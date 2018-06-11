@@ -66,7 +66,7 @@ public class ProjectFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TasksAdapter(onClickHandler);
+        adapter = new TasksAdapter(onClickHandler,projectId);
         recyclerView.setAdapter(adapter);
 
         ValueEventListener tasksListener = new ValueEventListener() {
