@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.androidacademy.team5.zebratime.ProjectsAdapter.ProjectOnClickHandler;
+import com.androidacademy.team5.zebratime.entity.Project;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,11 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import com.androidacademy.team5.zebratime.entity.Project;
-
 public class AllProjectsFragment extends Fragment {
 
-
+    private static final int VERTICAL_ITEM_SPACE = 20;
     private ProjectsAdapter adapter;
     private RecyclerView recyclerView;
     private ProjectOnClickHandler onClickHandler;
@@ -58,6 +57,9 @@ public class AllProjectsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new ItemDecorator(VERTICAL_ITEM_SPACE));
+        recyclerView.addItemDecoration(
+                new ItemDevider(getActivity(), R.drawable.divider));
         adapter = new ProjectsAdapter(onClickHandler);
         recyclerView.setAdapter(adapter);
 
@@ -69,7 +71,9 @@ public class AllProjectsFragment extends Fragment {
                 Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
 
                 for(DataSnapshot project:snapshots){
-                    projects.add(project.getValue(Project.class));
+                    try {
+                        projects.add(project.getValue(Project.class));
+                    } catch (Exception e) {}
                 }
                 adapter.replaceWith(projects);
             }

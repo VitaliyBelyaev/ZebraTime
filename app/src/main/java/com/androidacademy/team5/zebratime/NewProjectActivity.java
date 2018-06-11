@@ -2,6 +2,7 @@ package com.androidacademy.team5.zebratime;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +19,9 @@ public class NewProjectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_project);
-
+        TextInputLayout til = findViewById(R.id.text_input_ed_text);
+        EditText etl = findViewById(R.id.ed_text);
+        til.setHint(getString(R.string.enter_title));
         Button okBtn = (Button) findViewById(R.id.ok_button);
 
         okBtn.setOnClickListener(new View.OnClickListener() {

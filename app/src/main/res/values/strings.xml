@@ -3,6 +3,7 @@
     <string name="title_project">Title</string>
     <string name="create_project">Create Project</string>
     <string name="enter_title">Enter title...</string>
+    <string name="enter_comment">Enter comment...</string>
     <string name="ok_button">Ok</string>
     <string name="details_label">Detailed information</string>
     <string name="settings_label">Settings</string>
