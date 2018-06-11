@@ -32,7 +32,6 @@ public class TimerActivity extends AppCompatActivity {
 
     private TextView timeTextView;
     private Button actionButton;
-    private Button stopButton;
     private TextView taskTitleTextView;
     private TextView taskDurationTextView;
     private Task task;
@@ -110,21 +109,38 @@ public class TimerActivity extends AppCompatActivity {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MyService.class);
                 switch(timer.getState()){
                     case STOP:
                         actionButton.setText("STOP");
                         timer.start(internalTimer);
+                        intent.setAction("Start");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        else startService(intent);
                         break;
                     case WORK:
                         actionButton.setText("START");
                         timer.stop();
+                        intent.setAction("Stop");
+                        startService(intent);
                         break;
                     case OVERWORK:
                         actionButton.setText("START");
                         timer.pause(breakTimer);
+                        intent.setAction("Stop");
+                        startService(intent);
+                        break;
                     case PAUSE:
                         actionButton.setText("STOP");
+                        intent.setAction("Start");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        else startService(intent);
                         timer.start(internalTimer);
+                        break;
                 }
             }
         });
