@@ -1,95 +1,99 @@
 package com.androidacademy.team5.zebratime;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 
 import com.androidacademy.team5.zebratime.entity.Session;
 import com.androidacademy.team5.zebratime.entity.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static com.androidacademy.team5.zebratime.Timer.State.OVERWORK;
+import static com.androidacademy.team5.zebratime.Timer.State.STOP;
 
-enum State {
-    STOP, PAUSE, WORK, OVERWORK
-}
 
 public class Timer {
-    private Task task = new Task("fertyuytd", "gfghgghf", "gfsdhjhhj");
+    private Task task;
     private State state;
-    Session newSession = new Session();
+    Session newSession;
+    CountDownTimer internalTimer;
+    CountDownTimer breakTimer;
 
     long startTime;
     long endTime;
 
-    CountDownTimer timer = new CountDownTimer(5000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
-            }
-
-            public void onFinish() {
-                stop();
-                state = State.OVERWORK;
-                Log.i("TimerTest", "Done!");
-            }
-        };
-
-    CountDownTimer timerRest = new CountDownTimer(2000, 1000) {
-
-        public void onTick(long millisUntilFinished) {
-            Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
-        }
-
-        public void onFinish() {
-            state = State.STOP;
-            Log.i("TimerTest", "Done!");
-        }
-    };
-    private Timer(){}
-    public static Timer initInstance(){
-        return new Timer();
+    enum State {
+        STOP, PAUSE, WORK, OVERWORK
     }
 
-    Task getTask(){
+    private Timer() {
+    }
+
+    public static Timer initInstance() {
+        Timer timer = new Timer();
+        timer.task = null;
+        timer.state = STOP;
+        timer.newSession = new Session();
+
+        return timer;
+    }
+
+    Task getTask() {
         return this.task;
     }
 
-    void setTask(Task task){
+    public void setTask(Task task) {
         this.task = task;
     }
 
-    void start(){
-        state = State.WORK;
-        timer.start();
-        startTime = System.currentTimeMillis();
-        newSession.setStartDate(startTime);
+    public State getState() {
+        return state;
     }
 
-    void stop(){
-        state = State.STOP;
-        timer.cancel();
-        endTime = System.currentTimeMillis();
-        newSession.setDuration(endTime-startTime);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mRef = database.getReference().child("Sessions");
-        newSession.setId(mRef.push().getKey());
-        newSession.setIdTask(task.getId());
-        mRef.child(newSession.getId()).setValue(newSession);
+    public void setState(State state) {
+        this.state = state;
     }
 
-    void pause(){
-        timerRest.start();
+    void start(CountDownTimer internalTimer) {
+        this.internalTimer = internalTimer;
+        if(state == STOP){
+            state = State.WORK;
+            internalTimer.start();
+            startTime = System.currentTimeMillis();
+            newSession.setStartDate(startTime);
+        }
+    }
 
-        state = State.PAUSE;
-        endTime = System.currentTimeMillis();
-        newSession.setDuration(endTime-startTime);
+    void stop() {
+        if(state != STOP){
+            state = STOP;
+            internalTimer.cancel();
+            endTime = System.currentTimeMillis();
+            newSession.setDuration(endTime - startTime);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mRef = database.getReference().child("Sessions");
-        newSession.setId(mRef.push().getKey());
-        newSession.setIdTask(task.getId());
-        mRef.child(newSession.getId()).setValue(newSession);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference mRef = database.getReference().child("Sessions");
+            newSession.setId(mRef.push().getKey());
+            newSession.setIdTask(task.getId());
+            mRef.child(newSession.getId()).setValue(newSession);
+        }
+
+    }
+
+    void pause(CountDownTimer breakTimer) {
+        this.breakTimer = breakTimer;
+        if(state == OVERWORK){
+            breakTimer.start();
+
+            state = State.PAUSE;
+            endTime = System.currentTimeMillis();
+            newSession.setDuration(endTime - startTime);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference mRef = database.getReference().child("Sessions");
+            newSession.setId(mRef.push().getKey());
+            newSession.setIdTask(task.getId());
+            mRef.child(newSession.getId()).setValue(newSession);
+        }
     }
 
 }
