@@ -10,13 +10,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/create_project"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_project"
-        android:layout_marginTop="10dp"/>
 
     <EditText
         android:id="@+id/ed_text"
@@ -29,6 +24,7 @@
         android:id="@+id/ok_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/ok_button"
         android:layout_marginTop="10dp"/>
 

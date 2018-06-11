@@ -5,6 +5,31 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/task_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp">
+
+        <TextView
+            android:id="@+id/tv_timer_task_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Task title"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/tv_timer_task_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="52"
+            android:textSize="15dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/timer_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="32sp"
+            android:textSize="50dp"
             android:text="25:00"
             />
 
@@ -26,35 +51,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:text="Action button"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/task_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="16dp">
 
-        <TextView
-            android:id="@+id/tv_timer_task_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Task title"/>
-
-        <TextView
-            android:id="@+id/tv_timer_task_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="52"/>
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/end_task_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
-        android:text="END Task"/>
+        android:layout_marginTop="10dp"
+        android:text="END Task" />
 
 </LinearLayout>

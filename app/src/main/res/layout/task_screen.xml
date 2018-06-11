@@ -22,19 +22,22 @@
             android:id="@+id/textTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Название"
+            android:layout_marginTop="10dp"
+            android:hint="Enter title..."
             />
         <EditText
             android:id="@+id/textComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Комментарий"
+            android:layout_marginTop="10dp"
+            android:hint="Enter comment..."
             />
         <Button
             android:id="@+id/btnOk"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             android:text="OK">
         </Button>
     </LinearLayout>
