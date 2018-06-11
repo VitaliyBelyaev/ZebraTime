@@ -38,7 +38,6 @@ public class NewProjectActivity extends AppCompatActivity {
                 }
                 else
                 {
-
                     FirebaseDatabase database =  FirebaseDatabase.getInstance();
                     DatabaseReference mRef =  database.getReference().child("Projects");
 

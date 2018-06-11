@@ -4,6 +4,7 @@ public class Session {
     long startDate;
     long duration;
     String id;
+    String idTask;
 
     public String getId() {
         return id;
@@ -16,6 +17,14 @@ public class Session {
     public long getStartDate() {
         return startDate;
 
+    }
+
+    public String getIdTask() {
+        return idTask;
+    }
+
+    public void setIdTask(String idTask) {
+        this.idTask = idTask;
     }
 
     public void setStartDate(long startDate) {

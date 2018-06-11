@@ -4,33 +4,34 @@ import android.os.CountDownTimer;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.androidacademy.team5.zebratime.entity.Session;
+import com.androidacademy.team5.zebratime.entity.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.TimerTask;
 
-import entity.Session;
-import entity.Task;
 
 enum State {
     STOP, PAUSE, WORK, OVERWORK
 }
 
 public class Timer {
-    private Task task;
+    private Task task = new Task("fertyuytd", "gfghgghf", "gfsdhjhhj");
     private State state;
     Session newSession = new Session();
 
     long startTime;
     long endTime;
 
-    CountDownTimer timer = new CountDownTimer(2000, 1000) {
+    CountDownTimer timer = new CountDownTimer(5000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
             }
 
             public void onFinish() {
+                stop();
                 state = State.OVERWORK;
                 Log.i("TimerTest", "Done!");
             }
@@ -74,10 +75,12 @@ public class Timer {
         newSession.setDuration(endTime-startTime);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mRef = database.getReference().child("Projects").child("-LEf691aMXUXdD7ZNizn"/*task.getIdProject()*/).child("tasks").child("-LEfbH4yHkto-Y-oxgh_"/*task.getId()*/).child("sessions");
+        DatabaseReference mRef = database.getReference().child("Sessions");
         newSession.setId(mRef.push().getKey());
+        newSession.setIdTask(task.getId());
         mRef.child(newSession.getId()).setValue(newSession);
     }
+
     void pause(){
         timerRest.start();
 
@@ -86,8 +89,9 @@ public class Timer {
         newSession.setDuration(endTime-startTime);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mRef = database.getReference().child("Projects").child("-LEf691aMXUXdD7ZNizn"/*task.getIdProject()*/).child("tasks").child("-LEfbH4yHkto-Y-oxgh_"/*task.getId()*/).child("sessions");
+        DatabaseReference mRef = database.getReference().child("Sessions");
         newSession.setId(mRef.push().getKey());
+        newSession.setIdTask(task.getId());
         mRef.child(newSession.getId()).setValue(newSession);
     }
 

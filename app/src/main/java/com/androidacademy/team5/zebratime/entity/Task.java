@@ -1,5 +1,4 @@
-package entity;
-
+package com.androidacademy.team5.zebratime.entity;
 import com.androidacademy.team5.zebratime.entity.Session;
 
 import java.util.ArrayList;
