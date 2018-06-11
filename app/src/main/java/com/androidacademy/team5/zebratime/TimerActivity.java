@@ -1,11 +1,11 @@
 package com.androidacademy.team5.zebratime;
 
 import android.content.Intent;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,11 +21,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import static com.androidacademy.team5.zebratime.MainActivity.PROJECT_ID;
 import static com.androidacademy.team5.zebratime.MainActivity.TASK_ID;
-import static com.androidacademy.team5.zebratime.Timer.State.OVERWORK;
 import static com.androidacademy.team5.zebratime.Timer.State.STOP;
 
 public class TimerActivity extends AppCompatActivity {
@@ -40,6 +41,35 @@ public class TimerActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference tasksRef = database.getReference("Tasks");
+    private Timer.TimerListener timerListener = new Timer.TimerListener() {
+        @Override
+        public void onTick(Timer timer) {
+
+            long workTime = 60 * 1000 * getSharedPreferences().getLong("workTime",25);
+            long shortBreakTime = 60 * 1000 * getSharedPreferences().getLong("shortTime",5);
+
+            switch(timer.getState()){
+                case STOP:
+                    actionButton.setText("Start");
+                    timeTextView.setText(formatTime(workTime));
+                    break;
+                case WORK:
+                    actionButton.setText("Stop");
+                    long passedTime = System.currentTimeMillis() - timer.startTime;
+                    timeTextView.setText(formatTime(workTime - passedTime));
+                    break;
+                case OVERWORK:
+                    actionButton.setText("Take break");
+                    timeTextView.setText(formatTime(shortBreakTime));
+                    break;
+                case PAUSE:
+                    actionButton.setText("START");
+                    long passedBreakTime = System.currentTimeMillis() - timer.endTime;
+                    timeTextView.setText(String.valueOf((shortBreakTime - passedBreakTime)));
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +77,8 @@ public class TimerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timer);
 
         timer = getApp().timer;
+        timer.addListener(timerListener);
+
         timeTextView = findViewById(R.id.tv_time);
         actionButton = findViewById(R.id.action_button);
         taskTitleTextView = findViewById(R.id.tv_timer_task_title);
@@ -83,42 +115,17 @@ public class TimerActivity extends AppCompatActivity {
             showTaskInfo(task);
         }
 
-        final CountDownTimer internalTimer = new CountDownTimer(50000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
-                Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
-                timeTextView.setText(String.valueOf(millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                timer.setState(OVERWORK);
-                actionButton.setText("Take break");
-                timeTextView.setText("00:05");
-                Log.i("TimerTest", "Done!");
-            }
-        };
-
-        final CountDownTimer breakTimer = new CountDownTimer(7000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                Log.i("TimerTest", "seconds remaining: " + millisUntilFinished / 1000);
-                timeTextView.setText(String.valueOf(millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                timer.setState(STOP);
-                timeTextView.setText("00:30");
-                Log.i("TimerTest", "Done!");
-            }
-        };
 
         endTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), MyService.class);
+                i.putExtra("timerServiceAction", "Stop");
+                startService(i);
                 timer.setTask(null);
                 if(timer.getState() != STOP){
                     timer.stop();
-                    timer.setState(STOP);
                 }
                 finish();
             }
@@ -127,42 +134,32 @@ public class TimerActivity extends AppCompatActivity {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), MyService.class);
-                switch(timer.getState()){
+                switch (timer.getState()){
                     case STOP:
-                        actionButton.setText("STOP");
-                        timer.start(internalTimer);
-                        intent.setAction("Start");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent);
-                        }
-                        else startService(intent);
+                        Intent i = new Intent(getBaseContext(), MyService.class);
+                        i.putExtra("timerServiceAction", "Start");
+                        startService(i);
+                        timer.start();
                         break;
                     case WORK:
-                        actionButton.setText("START");
-                        timeTextView.setText("00:00");
                         timer.stop();
-                        intent.setAction("Stop");
-                        startService(intent);
                         break;
                     case OVERWORK:
-                        actionButton.setText("START");
-                        timer.pause(breakTimer);
-                        intent.setAction("Stop");
-                        startService(intent);
+                        timer.pause();
                         break;
                     case PAUSE:
-                        actionButton.setText("START");
-                        intent.setAction("Start");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent);
-                        }
-                        else startService(intent);
-                        timer.start(internalTimer);
+                        timer.start();
                         break;
                 }
+
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.removeListener(timerListener);
     }
 
     @Override
@@ -192,6 +189,20 @@ public class TimerActivity extends AppCompatActivity {
             }
         }
         taskDurationTextView.setText(String.valueOf(duration));
+    }
+
+    private String formatTime(long time){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        return timeFormat.format(time);
+    }
+
+    private String formatDurationTime(long time){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh'h' mm'm'", Locale.getDefault());
+        return timeFormat.format(time);
+    }
+
+    private SharedPreferences getSharedPreferences(){
+        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private App getApp() {

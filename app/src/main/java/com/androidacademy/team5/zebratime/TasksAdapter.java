@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,10 +69,14 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH> {
                 }
 
                 long totalTime = 0;
-                for(Session session:sessions){
-                    totalTime = totalTime + session.getDuration();
+                if(sessions != null){
+                    for(Session session:sessions){
+                        totalTime = totalTime + session.getDuration();
+                    }
+
                 }
-                holder.durationTextView.setText(String.valueOf(totalTime));
+
+                holder.durationTextView.setText(formatTime(totalTime));
                 holder.pomodorosTextView.setText(String.valueOf(sessions.size()));
             }
 
@@ -117,5 +122,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH> {
                 }
             });
         }
+    }
+
+    private String formatTime(long time){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH'h' mm'm'");
+        return timeFormat.format(time - 3*60*60*1000);
     }
 }

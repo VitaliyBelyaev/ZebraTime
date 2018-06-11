@@ -4,7 +4,7 @@ import android.app.Application;
 
 public class App extends Application {
 
-    Timer timer;
+    public static Timer timer;
 
     @Override
     public void onCreate() {

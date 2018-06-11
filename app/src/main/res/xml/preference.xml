@@ -2,22 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:defaultValue="@string/pref_default_work_time"
+        android:defaultValue="25"
         android:key="@string/work_time_key"
         android:title="@string/work_time_title"/>
 
     <EditTextPreference
-        android:defaultValue="@string/pref_default_short_rest"
+        android:defaultValue="5"
         android:key="@string/short_rest_key"
         android:title="@string/short_rest_title"/>
 
     <EditTextPreference
-        android:defaultValue="@string/pref_default_long_rest"
+        android:defaultValue="15"
         android:key="@string/long_rest_key"
         android:title="@string/long_rest_title"/>
 
     <EditTextPreference
-        android:defaultValue="@string/pref_default_long_break_interval"
+        android:defaultValue="4"
         android:key="@string/long_break_interval_key"
         android:title="@string/long_break_interval_title"/>
 

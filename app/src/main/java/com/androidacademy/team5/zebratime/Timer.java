@@ -7,6 +7,8 @@ import com.androidacademy.team5.zebratime.entity.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 import static com.androidacademy.team5.zebratime.Timer.State.OVERWORK;
 import static com.androidacademy.team5.zebratime.Timer.State.STOP;
 
@@ -15,8 +17,7 @@ public class Timer {
     private Task task;
     private State state;
     Session newSession;
-    CountDownTimer internalTimer;
-    CountDownTimer breakTimer;
+    ArrayList<TimerListener> listeners = new ArrayList<>();
 
     long startTime;
     long endTime;
@@ -25,8 +26,13 @@ public class Timer {
         STOP, PAUSE, WORK, OVERWORK
     }
 
+    interface TimerListener{
+        void onTick(Timer timer);
+    }
+
     private Timer() {
     }
+
 
     public static Timer initInstance() {
         Timer timer = new Timer();
@@ -49,17 +55,37 @@ public class Timer {
         return state;
     }
 
-    public void setState(State state) {
-        this.state = state;
-    }
 
-    void start(CountDownTimer internalTimer) {
-        this.internalTimer = internalTimer;
+    final CountDownTimer internalTimer = new CountDownTimer(50000, 1000) {
+
+        public void onTick(long millisUntilFinished) {
+            notifyListeners();
+        }
+
+        public void onFinish() {
+            notifyListeners();
+            state = OVERWORK;
+        }
+    };
+
+    final CountDownTimer breakTimer = new CountDownTimer(7000, 1000) {
+
+        public void onTick(long millisUntilFinished) {
+            notifyListeners();
+        }
+
+        public void onFinish() {
+            notifyListeners();
+        }
+    };
+
+    void start() {
         if(state == STOP){
             state = State.WORK;
             internalTimer.start();
             startTime = System.currentTimeMillis();
             newSession.setStartDate(startTime);
+            notifyListeners();
         }
     }
 
@@ -75,12 +101,12 @@ public class Timer {
             newSession.setId(mRef.push().getKey());
             newSession.setIdTask(task.getId());
             mRef.child(newSession.getId()).setValue(newSession);
+            notifyListeners();
         }
 
     }
 
-    void pause(CountDownTimer breakTimer) {
-        this.breakTimer = breakTimer;
+    void pause() {
         if(state == OVERWORK){
             breakTimer.start();
 
@@ -93,7 +119,21 @@ public class Timer {
             newSession.setId(mRef.push().getKey());
             newSession.setIdTask(task.getId());
             mRef.child(newSession.getId()).setValue(newSession);
+            notifyListeners();
         }
     }
 
+    void addListener(TimerListener listener){
+        listeners.add(listener);
+    }
+
+    void removeListener(TimerListener listener){
+        listeners.remove(listener);
+    }
+
+    private void notifyListeners(){
+        for(TimerListener listener:listeners){
+            listener.onTick(this);
+        }
+    }
 }

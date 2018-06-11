@@ -22,10 +22,13 @@ public class NewTaskActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("Tasks");
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_screen);
+
+
 
 
         final String projectId = getIntent().getStringExtra(EXTRA_TEXT);
@@ -45,7 +48,6 @@ public class NewTaskActivity extends AppCompatActivity {
                 }
         });
 
-
     }
     public static void startActivity(Activity activity, String projectId){
         Intent intent = new Intent(activity, NewTaskActivity.class);
@@ -53,6 +55,5 @@ public class NewTaskActivity extends AppCompatActivity {
         activity.startActivity(intent);
 
     }
-
 
 }
