@@ -18,20 +18,32 @@
             android:layout_gravity="center_horizontal"
             android:text="Create task">
         </TextView>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_textTitle"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp">
         <EditText
             android:id="@+id/textTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Enter title..."
+            android:hint="@string/enter_title"
             />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text_input_textComment"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp">
         <EditText
             android:id="@+id/textComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Enter comment..."
+            android:hint="@string/enter_comment"
             />
+        </android.support.design.widget.TextInputLayout>
         <Button
             android:id="@+id/btnOk"
             android:layout_width="100dp"
