@@ -12,7 +12,6 @@ import com.androidacademy.team5.zebratime.entity.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
 import static android.content.Intent.EXTRA_TEXT;
 
 public class NewTaskActivity extends AppCompatActivity {
@@ -41,6 +40,7 @@ public class NewTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     Task task = new Task(myRef.push().getKey(),textTitle.getText().toString(),textComment.getText().toString());
+                    task.setIdProject(projectId);
                     DatabaseReference projectRef = projectRefJ.child(projectId);
                     projectRef.child("tasks").child(task.getId()).setValue(task);
                     finish();
