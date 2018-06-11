@@ -7,8 +7,16 @@ public class Task {
     String id;
     String title;
     String comment;
-    List<Session>sessions;
+    String idProject;
+    List<Session> sessions;
 
+    public String getIdProject() {
+        return idProject;
+    }
+
+    public void setIdProject(String idProject) {
+        this.idProject = idProject;
+    }
 
     public Task(){}
 
@@ -49,6 +57,16 @@ public class Task {
 
     public void addSession(Session session) {
         this.sessions.add(session);
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", comment='" + comment + '\'' +
+                ", sessions=" + sessions +
+                '}';
     }
 }
 

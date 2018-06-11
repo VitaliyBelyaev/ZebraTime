@@ -8,10 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.androidacademy.team5.zebratime.entity.Project;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import com.androidacademy.team5.zebratime.entity.Project;
 
 public class NewProjectActivity extends AppCompatActivity {
 
@@ -38,7 +37,6 @@ public class NewProjectActivity extends AppCompatActivity {
                 }
                 else
                 {
-
                     FirebaseDatabase database =  FirebaseDatabase.getInstance();
                     DatabaseReference mRef =  database.getReference().child("Projects");
 

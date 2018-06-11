@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".App"
         android:icon="@mipmap/ic2_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic2_launcher_round"
@@ -17,10 +18,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewProjectActivity"></activity>
-
         <activity android:name=".NewTaskActivity"/>
         <activity android:name=".TimerActivity"/>
-        <activity android:name=".TimerPreferences"/>
+        <activity android:name=".TimerSettingsActivity"/>
+        <service android:name=".MyService"></service>
+
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.androidacademy.team5.zebratime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,9 @@ public class MainActivity extends AppCompatActivity
                    TasksAdapter.TaskOnClickHandler {
 
     private DrawerLayout drawerLayout;
+    public static final String PROJECT_ID = "projectId";
+    public static final String TASK_ID = "taskId";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +41,15 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onTaskClick(String taskId) {
+    private App getApp(){
+        return (App) getApplication();
+    }
 
+    @Override
+    public void onTaskClick(String taskId, String projectId) {
+        Intent intent = new Intent(this,TimerActivity.class);
+        intent.putExtra(PROJECT_ID,projectId);
+        intent.putExtra(TASK_ID,taskId);
+        startActivity(intent);
     }
 }

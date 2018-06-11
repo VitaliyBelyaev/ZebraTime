@@ -34,7 +34,7 @@ public class ProjectFragment extends Fragment {
 
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference tasksRef = database.getReference("tasks");
+    private DatabaseReference tasksRef = database.getReference("Tasks");
     private DatabaseReference projectRefJ;
 
 
@@ -66,7 +66,7 @@ public class ProjectFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TasksAdapter(onClickHandler);
+        adapter = new TasksAdapter(onClickHandler,projectId);
         recyclerView.setAdapter(adapter);
 
         ValueEventListener tasksListener = new ValueEventListener() {
@@ -74,10 +74,10 @@ public class ProjectFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 ArrayList<Task> tasks = new ArrayList<>();
-                Iterable<DataSnapshot> snapshots = dataSnapshot.child("tasks").getChildren();
+                Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
 
-                for(DataSnapshot project:snapshots){
-                    tasks.add(project.getValue(Task.class));
+                for(DataSnapshot snapshot:snapshots){
+                    tasks.add(snapshot.getValue(Task.class));
                 }
                 adapter.replaceWith(tasks);
             }
@@ -88,7 +88,7 @@ public class ProjectFragment extends Fragment {
             }
         };
 
-        projectRefJ.addValueEventListener(tasksListener);
+        tasksRef.orderByChild("idProject").equalTo(projectId).addValueEventListener(tasksListener);
 
 
         fab.setOnClickListener(new View.OnClickListener() {
