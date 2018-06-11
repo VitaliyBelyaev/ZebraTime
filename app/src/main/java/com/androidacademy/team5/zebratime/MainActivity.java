@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.left_container, allProjectsFragment)
                 .commit();
 
-        getApp().timer.start();
-
     }
 
     @Override
