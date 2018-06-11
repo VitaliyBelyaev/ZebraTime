@@ -1,12 +1,14 @@
 package com.androidacademy.team5.zebratime;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ public class TimerActivity extends AppCompatActivity {
 
     private TextView timeTextView;
     private Button actionButton;
+    private Button stopButton;
     private TextView taskTitleTextView;
     private TextView taskDurationTextView;
     private Task task;
@@ -42,8 +45,27 @@ public class TimerActivity extends AppCompatActivity {
 
         timeTextView = findViewById(R.id.tv_time);
         actionButton = findViewById(R.id.action_button);
+        stopButton = findViewById(R.id.stop_button);
         taskTitleTextView = findViewById(R.id.tv_timer_task_title);
         taskDurationTextView = findViewById(R.id.tv_timer_task_duration);
+
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MyService.class);
+                intent.setAction("Start");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent);
+                }
+                else startService(intent);
+            }
+        });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MyService.class);
+                intent.setAction("Stop");
+                startService(intent);
+            }
+        });
 
         String projectId = getIntent().getStringExtra(PROJECT_ID);
         final String taskId = getIntent().getStringExtra(TASK_ID);
