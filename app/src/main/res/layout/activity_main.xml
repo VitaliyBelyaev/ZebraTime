@@ -15,10 +15,11 @@
 
     <FrameLayout
         android:id="@+id/left_container"
+
         android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorAccent"
+        android:background="@color/leftDrawerColor"
         android:name="com.androidacademy.team5.zebratime.AllProjectsFragment">
     </FrameLayout>
 
