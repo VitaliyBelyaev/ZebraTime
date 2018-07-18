@@ -17,11 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewProjectActivity"></activity>
+        <activity android:name=".NewProjectActivity"/>
         <activity android:name=".NewTaskActivity"/>
         <activity android:name=".TimerActivity"/>
         <activity android:name=".TimerSettingsActivity"/>
-        <service android:name=".MyService"></service>
+        <service android:name=".TimerService"/>
 
     </application>
 

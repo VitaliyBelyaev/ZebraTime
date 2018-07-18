@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.androidacademy.team5.zebratime.entity.Session;
-import com.androidacademy.team5.zebratime.entity.Task;
+import com.androidacademy.team5.zebratime.domain.Session;
+import com.androidacademy.team5.zebratime.domain.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

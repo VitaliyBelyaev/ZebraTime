@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.androidacademy.team5.zebratime.TasksAdapter.TaskOnClickHandler;
-import com.androidacademy.team5.zebratime.entity.Task;
+import com.androidacademy.team5.zebratime.domain.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,18 +31,13 @@ public class ProjectFragment extends Fragment {
     private FloatingActionButton fab;
     private String projectId;
     public static final String ARG_PROJECT_ID = "projectId";
-
-
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference tasksRef = database.getReference("Tasks");
-    private DatabaseReference projectRefJ;
+    private DatabaseReference tasksRef;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.projectId = getArguments().getString(ARG_PROJECT_ID);
-        this.projectRefJ = database.getReference("Projects").child(projectId);
     }
 
     @Nullable
@@ -51,7 +46,7 @@ public class ProjectFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_project,container,false);
+        return inflater.inflate(R.layout.fragment_project, container, false);
     }
 
     @Override
@@ -65,9 +60,39 @@ public class ProjectFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        tasksRef = FirebaseDatabase.getInstance().getReference("Tasks");
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TasksAdapter(onClickHandler,projectId);
+        adapter = new TasksAdapter(onClickHandler, projectId);
         recyclerView.setAdapter(adapter);
+
+        tasksRef.orderByChild("idProject")
+                .equalTo(projectId)
+                .addValueEventListener(createTasksListener());
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewTaskActivity.startActivity(getActivity(), projectId);
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof TaskOnClickHandler) {
+            onClickHandler = (TaskOnClickHandler) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onClickHandler = null;
+    }
+
+    private ValueEventListener createTasksListener() {
 
         ValueEventListener tasksListener = new ValueEventListener() {
             @Override
@@ -76,7 +101,7 @@ public class ProjectFragment extends Fragment {
                 ArrayList<Task> tasks = new ArrayList<>();
                 Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
 
-                for(DataSnapshot snapshot:snapshots){
+                for (DataSnapshot snapshot : snapshots) {
                     tasks.add(snapshot.getValue(Task.class));
                 }
                 adapter.replaceWith(tasks);
@@ -87,30 +112,7 @@ public class ProjectFragment extends Fragment {
                 Log.w("Error", "loadPost:onCancelled", databaseError.toException());
             }
         };
-
-        tasksRef.orderByChild("idProject").equalTo(projectId).addValueEventListener(tasksListener);
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NewTaskActivity.startActivity(getActivity(),projectId);
-            }
-        });
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(context instanceof TaskOnClickHandler){
-            onClickHandler = (TaskOnClickHandler) context;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        onClickHandler = null;
+        return tasksListener;
     }
 
 

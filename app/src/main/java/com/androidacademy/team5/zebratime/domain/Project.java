@@ -1,4 +1,4 @@
-package com.androidacademy.team5.zebratime.entity;
+package com.androidacademy.team5.zebratime.domain;
 
 import java.util.ArrayList;
 

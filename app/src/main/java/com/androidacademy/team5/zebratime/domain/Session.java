@@ -1,4 +1,4 @@
-package com.androidacademy.team5.zebratime.entity;
+package com.androidacademy.team5.zebratime.domain;
 
 public class Session {
     long startDate;

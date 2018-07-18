@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.androidacademy.team5.zebratime.ProjectsAdapter.ProjectOnClickHandler;
-import com.androidacademy.team5.zebratime.entity.Project;
+import com.androidacademy.team5.zebratime.domain.Project;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,15 +27,11 @@ import java.util.ArrayList;
 public class AllProjectsFragment extends Fragment {
 
     private static final int VERTICAL_ITEM_SPACE = 20;
-    private ProjectsAdapter adapter;
-    private RecyclerView recyclerView;
-    private ProjectOnClickHandler onClickHandler;
     private Button createProjectButton;
-
-
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-    DatabaseReference projectRefJ = database.getReference("Projects");
+    private RecyclerView recyclerView;
+    private ProjectsAdapter adapter;
+    private ProjectOnClickHandler onClickHandler;
+    private DatabaseReference projectRef;
 
     @Nullable
     @Override
@@ -43,7 +39,7 @@ public class AllProjectsFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_all_projects,container,false);
+        return inflater.inflate(R.layout.fragment_all_projects, container, false);
     }
 
     @Override
@@ -56,40 +52,14 @@ public class AllProjectsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new ItemDecorator(VERTICAL_ITEM_SPACE));
-        recyclerView.addItemDecoration(
-                new ItemDevider(getActivity(), R.drawable.divider));
-        adapter = new ProjectsAdapter(onClickHandler);
-        recyclerView.setAdapter(adapter);
-
-        ValueEventListener projectsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                ArrayList<Project> projects = new ArrayList<>();
-                Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
-
-                for(DataSnapshot project:snapshots){
-                    try {
-                        projects.add(project.getValue(Project.class));
-                    } catch (Exception e) {}
-                }
-                adapter.replaceWith(projects);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("Error", "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-
-        projectRefJ.addValueEventListener(projectsListener);
+        projectRef = FirebaseDatabase.getInstance().getReference("Projects");
+        initRecyclerView();
+        projectRef.addValueEventListener(createProjectsListener());
 
         createProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext() ,NewProjectActivity.class);
+                Intent intent = new Intent(getContext(), NewProjectActivity.class);
                 startActivity(intent);
             }
         });
@@ -98,7 +68,7 @@ public class AllProjectsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof ProjectOnClickHandler){
+        if (context instanceof ProjectOnClickHandler) {
             onClickHandler = (ProjectOnClickHandler) context;
         }
     }
@@ -109,8 +79,41 @@ public class AllProjectsFragment extends Fragment {
         onClickHandler = null;
     }
 
+    private void initRecyclerView() {
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new ItemDecorator(VERTICAL_ITEM_SPACE));
+        recyclerView.addItemDecoration(
+                new ItemDevider(getActivity(), R.drawable.divider));
+        adapter = new ProjectsAdapter(onClickHandler);
+        recyclerView.setAdapter(adapter);
+    }
 
+    private ValueEventListener createProjectsListener() {
+
+        ValueEventListener projectsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                ArrayList<Project> projects = new ArrayList<>();
+                Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
+
+                for (DataSnapshot project : snapshots) {
+                    try {
+                        projects.add(project.getValue(Project.class));
+                    } catch (Exception e) {
+                    }
+                }
+                adapter.replaceWith(projects);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Error", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        return projectsListener;
+    }
 
     public static AllProjectsFragment newInstance() {
         AllProjectsFragment fragment = new AllProjectsFragment();
