@@ -10,13 +10,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import static com.androidacademy.team5.zebratime.Timer.State.OVERWORK;
+import static com.androidacademy.team5.zebratime.Timer.State.PAUSE;
 import static com.androidacademy.team5.zebratime.Timer.State.STOP;
+import static com.androidacademy.team5.zebratime.Timer.State.WORK;
 
 
 public class Timer {
 
     private Task task;
     private State state;
+    private State prevState;
     private long startTime;
     private long endTime;
     private Session session;
@@ -40,6 +43,7 @@ public class Timer {
     public static Timer newInstance() {
         Timer timer = new Timer();
         timer.task = null;
+        timer.prevState = null;
         timer.state = STOP;
         timer.session = new Session();
 
@@ -58,27 +62,25 @@ public class Timer {
         return state;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public State getPrevState() {
+        return prevState;
     }
 
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
+    public long getStartTime() {
+        return startTime;
     }
 
     public long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
-        this.endTime = endTime;
-    }
 
 
 
     void start(long workTimeInMillis) {
         if (state == STOP) {
-            state = State.WORK;
+            prevState = getState();
+            state = WORK;
             breakTimer = null;
             workTimer = getWorkTimer(workTimeInMillis).start();
             startTime = System.currentTimeMillis();
@@ -89,6 +91,7 @@ public class Timer {
 
     void stop() {
         if (state != STOP) {
+            prevState = getState();
             state = STOP;
             workTimer.cancel();
             workTimer = null;
@@ -105,10 +108,12 @@ public class Timer {
 
     }
 
-    void pause(long breakTimeInMillis) {
+    void startBreak(long breakTimeInMillis) {
         if (state == OVERWORK) {
-            state = State.PAUSE;
-            breakTimer = getBreakTimer(breakTimeInMillis).start();
+            prevState = getState();
+            state = PAUSE;
+            breakTimer = getBreakTimer(breakTimeInMillis);
+            breakTimer.start();
             endTime = System.currentTimeMillis();
             session.setDuration(endTime - startTime);
 
@@ -117,6 +122,15 @@ public class Timer {
             session.setId(mRef.push().getKey());
             session.setIdTask(task.getId());
             mRef.child(session.getId()).setValue(session);
+            notifyListeners();
+        }
+    }
+
+    void stopBreak(){
+        if(state == PAUSE){
+            prevState = getState();
+            state = STOP;
+            breakTimer.cancel();
             notifyListeners();
         }
     }
@@ -144,8 +158,9 @@ public class Timer {
 
             @Override
             public void onFinish() {
-                notifyListeners();
+                prevState = getState();
                 state = OVERWORK;
+                notifyListeners();
             }
         };
     }
@@ -159,6 +174,8 @@ public class Timer {
 
             @Override
             public void onFinish() {
+                prevState = getState();
+                state = STOP;
                 notifyListeners();
             }
         };

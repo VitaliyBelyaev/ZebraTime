@@ -31,7 +31,7 @@ public class NewTaskActivity extends AppCompatActivity {
         final String projectId = getIntent().getStringExtra(EXTRA_TEXT);
         btnOk = findViewById(R.id.btnOk);
         titleEdT = findViewById(R.id.textTitle);
-        commentEdT= findViewById(R.id.textComment);
+        commentEdT = findViewById(R.id.textComment);
         titleTil = findViewById(R.id.text_input_textTitle);
         commentTil = findViewById(R.id.text_input_textComment);
 
@@ -45,20 +45,20 @@ public class NewTaskActivity extends AppCompatActivity {
                 final String taskTitle = titleEdT.getText().toString();
                 final String taskComment = commentEdT.getText().toString();
 
-                if (taskTitle.matches("")){
+                if (taskTitle.matches("")) {
                     showToast("Empty title");
                 } else {
-                    Task task = new Task(taskTitle,taskComment,projectId);
+                    Task task = new Task(taskTitle, taskComment, projectId);
                     addTaskToDB(task);
                     finish();
                 }
 
-                }
+            }
         });
 
     }
 
-    private void addTaskToDB(Task task){
+    private void addTaskToDB(Task task) {
         DatabaseReference tasksRef = FirebaseDatabase.getInstance()
                 .getReference().child("Tasks");
 
@@ -69,7 +69,8 @@ public class NewTaskActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
-    public static void startActivity(Activity activity, String projectId){
+
+    public static void startActivity(Activity activity, String projectId) {
         Intent intent = new Intent(activity, NewTaskActivity.class);
         intent.putExtra(EXTRA_TEXT, projectId);
         activity.startActivity(intent);

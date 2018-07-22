@@ -1,12 +1,9 @@
 package com.androidacademy.team5.zebratime;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -26,13 +23,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import static com.androidacademy.team5.zebratime.MainActivity.PROJECT_ID;
 import static com.androidacademy.team5.zebratime.MainActivity.TASK_ID;
 
-public class TimerActivity extends AppCompatActivity {
+public class TimerActivity extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private TextView timeTextView;
     private Button actionButton;
@@ -41,36 +39,20 @@ public class TimerActivity extends AppCompatActivity {
     private Task task;
     private Timer timer;
     private Button endTaskButton;
-    private boolean bound = false;
-    private TimerService tService;
+    private long workTime;
+    private long shortBreakTime;
+    private long longBreakTime;
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference tasksRef = database.getReference("Tasks");
+    private DatabaseReference sessionsRef = database.getReference("Sessions");
+
     public static final String TIMER_SERVICE_ACTION = "timerServiceAction";
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            TimerService.TimerBinder binder = (TimerService.TimerBinder) service;
-            Log.i("BINDING", "in onserviceConnected");
-            tService = binder.getTimerService();
-            bound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            bound = false;
-        }
-    };
 
 
     private Timer.TimerListener timerListener = new Timer.TimerListener() {
         @Override
         public void onTick(Timer timer) {
-
-            long workTime = 60 * 1000 * Long.valueOf(getSharedPreferences().getString(getString(R.string.work_time_key), "25"));
-            long shortBreakTime = 60 * 1000 *Long.valueOf(getSharedPreferences().getString(getString(R.string.short_rest_key), "5"));
 
             switch (timer.getState()) {
                 case STOP:
@@ -89,7 +71,7 @@ public class TimerActivity extends AppCompatActivity {
                 case PAUSE:
                     actionButton.setText("START");
                     long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
-                    timeTextView.setText(String.valueOf((shortBreakTime - passedBreakTime)));
+                    timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
                     break;
             }
         }
@@ -99,9 +81,11 @@ public class TimerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
-        Log.i("BINDING", "TA onCreate");
-        Intent intent = new Intent(getBaseContext(), TimerService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
+
+        synchronizePreferredTimes();
 
         timeTextView = findViewById(R.id.tv_time);
         actionButton = findViewById(R.id.action_button);
@@ -109,9 +93,29 @@ public class TimerActivity extends AppCompatActivity {
         taskDurationTextView = findViewById(R.id.tv_timer_task_duration);
         endTaskButton = findViewById(R.id.end_task_button);
 
-        actionButton.setText("Start");
-
         timer = getApp().timer;
+
+        switch (timer.getState()) {
+            case STOP:
+                actionButton.setText("Start");
+                timeTextView.setText(formatTime(workTime));
+                break;
+            case WORK:
+                actionButton.setText("Stop");
+                long passedTime = System.currentTimeMillis() - timer.getStartTime();
+                timeTextView.setText(formatTime(workTime - passedTime));
+                break;
+            case OVERWORK:
+                actionButton.setText("Take break");
+                timeTextView.setText(formatTime(shortBreakTime));
+                break;
+            case PAUSE:
+                actionButton.setText("START");
+                long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
+                timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
+                break;
+        }
+
 
         if (timer.getTask() == null) {
             String projectId = getIntent().getStringExtra(PROJECT_ID);
@@ -144,11 +148,13 @@ public class TimerActivity extends AppCompatActivity {
         endTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), TimerService.class);
-                i.putExtra(TIMER_SERVICE_ACTION, "Stop");
-                startService(i);
+                Intent serviceIntent = new Intent(getBaseContext(), TimerService.class);
+                serviceIntent.putExtra(TIMER_SERVICE_ACTION, "Stop");
+                startService(serviceIntent);
                 timer.stop();
                 timer.setTask(null);
+                Intent activityIntent = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(activityIntent);
                 finish();
             }
         });
@@ -157,11 +163,8 @@ public class TimerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                long workTime = 60 * 1000 * Long.valueOf(getSharedPreferences().getString(getString(R.string.work_time_key), "25"));
-                long shortBreakTime = 60 * 1000 *Long.valueOf(getSharedPreferences().getString(getString(R.string.short_rest_key), "5"));
                 switch (timer.getState()) {
                     case STOP:
-                        timer.addListener(timerListener);
                         Intent i = new Intent(getBaseContext(), TimerService.class);
                         i.putExtra(TIMER_SERVICE_ACTION, "Start");
                         startService(i);
@@ -171,9 +174,10 @@ public class TimerActivity extends AppCompatActivity {
                         timer.stop();
                         break;
                     case OVERWORK:
-                        timer.pause(shortBreakTime);
+                        timer.startBreak(shortBreakTime);
                         break;
                     case PAUSE:
+                        timer.stopBreak();
                         timer.start(workTime);
                         break;
                 }
@@ -185,21 +189,20 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("BINDING", "TA onStart, tService: "+tService);
+        timer.addListener(timerListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(connection);
-        bound = false;
+        timer.removeListener(timerListener);
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.removeListener(timerListener);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -219,16 +222,54 @@ public class TimerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.work_time_key))) {
+            String workTime = sharedPreferences.getString(key, "25");
+            this.workTime = 60 * 1000 * Long.valueOf(workTime);
+            timeTextView.setText(formatTime(this.workTime));
+        }
+
+        if (key.equals(getString(R.string.short_rest_key))) {
+            String workTime = sharedPreferences.getString(key, "5");
+            this.shortBreakTime = 60 * 1000 * Long.valueOf(workTime);
+        }
+    }
+
     private void showTaskInfo(Task task) {
         taskTitleTextView.setText(task.getTitle());
-        List<Session> sessions = task.getSessions();
-        long duration = 0;
-        if (sessions != null) {
-            for (Session session : sessions) {
-                duration = duration + session.getDuration();
+        sessionsRef.orderByChild("idTask")
+                .equalTo(task.getId())
+                .addValueEventListener(createSessionsListener());
+
+        timeTextView.setText(formatTime(workTime));
+    }
+
+    private ValueEventListener createSessionsListener() {
+
+        ValueEventListener sessionsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Session> sessions = new ArrayList<>();
+                Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
+
+                for (DataSnapshot snapshot : snapshots) {
+                    sessions.add(snapshot.getValue(Session.class));
+                }
+                long duration = 0;
+                for (Session session : sessions) {
+                    duration = duration + session.getDuration();
+                }
+
+                taskDurationTextView.setText(formatDurationTime(duration));
             }
-        }
-        taskDurationTextView.setText(String.valueOf(duration));
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("Error", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        return sessionsListener;
     }
 
     private String formatTime(long time) {
@@ -241,12 +282,17 @@ public class TimerActivity extends AppCompatActivity {
         return timeFormat.format(time);
     }
 
-    private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(this);
+
+    private void synchronizePreferredTimes() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        workTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.work_time_key), "25"));
+        shortBreakTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.short_rest_key), "5"));
     }
 
-    private App getApp(){
+
+    private App getApp() {
         return (App) getApplication();
     }
+
 
 }

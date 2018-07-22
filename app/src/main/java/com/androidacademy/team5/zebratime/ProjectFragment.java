@@ -23,6 +23,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+
+//Uses to list tasks of certain project
 public class ProjectFragment extends Fragment {
 
     private TasksAdapter adapter;
@@ -65,7 +67,7 @@ public class ProjectFragment extends Fragment {
         adapter = new TasksAdapter(onClickHandler, projectId);
         recyclerView.setAdapter(adapter);
 
-        tasksRef.orderByChild("idProject")
+        tasksRef.orderByChild("projectId")
                 .equalTo(projectId)
                 .addValueEventListener(createTasksListener());
 
