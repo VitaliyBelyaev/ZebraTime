@@ -33,7 +33,6 @@ public class ProjectFragment extends Fragment {
     private FloatingActionButton fab;
     private String projectId;
     public static final String ARG_PROJECT_ID = "projectId";
-    private DatabaseReference tasksRef;
 
 
     @Override
@@ -62,7 +61,7 @@ public class ProjectFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        tasksRef = FirebaseDatabase.getInstance().getReference("Tasks");
+        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Tasks");
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new TasksAdapter(onClickHandler, projectId);
         recyclerView.setAdapter(adapter);
@@ -75,7 +74,13 @@ public class ProjectFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewTaskActivity.startActivity(getActivity(), projectId);
+
+                NewTaskFragment fragment = NewTaskFragment.newInstance(projectId);
+                getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_container, fragment)
+                        .commit();
             }
         });
     }

@@ -17,8 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewProjectFragment"/>
-        <activity android:name=".NewTaskActivity"/>
         <activity android:name=".TimerActivity"/>
         <activity android:name=".TimerSettingsActivity"/>
         <service android:name=".TimerService"/>

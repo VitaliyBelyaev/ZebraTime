@@ -17,19 +17,18 @@
         android:id="@+id/text_input_ed_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter title"
+        android:hint="@string/enter_title"
         android:layout_marginTop="20dp">
 
         <EditText
-            android:id="@+id/ed_text"
+            android:id="@+id/project_title_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/enter_title" />
+            android:layout_marginTop="10dp" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/ok_button"
+        android:id="@+id/project_ok_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
