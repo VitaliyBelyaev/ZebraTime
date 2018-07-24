@@ -23,7 +23,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements ProjectsAdapter.ProjectOnClickHandler,
-        TasksAdapter.TaskOnClickHandler {
+        TasksAdapter.TaskOnClickHandler,
+        AllProjectsFragment.NewProjectHandler{
 
     private ActionBarDrawerToggle toggle;
 
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity
         tasksRef = database.getReference("Tasks");
         sessionsRef = database.getReference("Sessions");
 
-        AllProjectsFragment allProjectsFragment = AllProjectsFragment.newInstance();
+        AllProjectsFragment allProjectsFragment = AllProjectsFragment.newInstance(this);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity
 
                                 getSupportFragmentManager()
                                         .beginTransaction()
+                                        .addToBackStack(null)
                                         .add(R.id.main_container, projectFragment)
                                         .commit();
                             }
@@ -144,6 +146,15 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(PROJECT_ID, projectId);
         intent.putExtra(TASK_ID, taskId);
         startActivity(intent);
+    }
+
+    @Override
+    public void onNewProjectCreated() {
+        drawerLayout.closeDrawer(Gravity.START);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_container, NewProjectFragment.newInstance())
+                .commit();
     }
 }
 

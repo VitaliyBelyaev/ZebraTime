@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_margin="10dp"
     android:orientation="vertical"
-    tools:context=".NewProjectActivity">
+    tools:context=".NewProjectFragment">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,6 +17,7 @@
         android:id="@+id/text_input_ed_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Enter title"
         android:layout_marginTop="20dp">
 
         <EditText

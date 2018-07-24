@@ -1,7 +1,6 @@
 package com.androidacademy.team5.zebratime;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +30,11 @@ public class AllProjectsFragment extends Fragment {
     private ProjectsAdapter adapter;
     private ProjectOnClickHandler onClickHandler;
     private DatabaseReference projectRef;
+    private NewProjectHandler projectHandler;
+
+    interface NewProjectHandler {
+        void onNewProjectCreated();
+    }
 
     @Nullable
     @Override
@@ -58,8 +62,7 @@ public class AllProjectsFragment extends Fragment {
         createProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NewProjectActivity.class);
-                startActivity(intent);
+                projectHandler.onNewProjectCreated();
             }
         });
     }
@@ -111,8 +114,9 @@ public class AllProjectsFragment extends Fragment {
         return projectsListener;
     }
 
-    public static AllProjectsFragment newInstance() {
+    public static AllProjectsFragment newInstance(NewProjectHandler projectHandler) {
         AllProjectsFragment fragment = new AllProjectsFragment();
+        fragment.projectHandler = projectHandler;
         return fragment;
     }
 }
