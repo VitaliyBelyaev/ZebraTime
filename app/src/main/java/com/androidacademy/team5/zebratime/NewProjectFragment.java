@@ -21,8 +21,11 @@ public class NewProjectFragment extends Fragment {
 
     private EditText editText;
     private Button okButton;
+    CreatedProjectHandler createdProjectHandler;
 
-
+    interface CreatedProjectHandler{
+        void onNewProjectCreated(String projectId);
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,6 +40,7 @@ public class NewProjectFragment extends Fragment {
         editText = view.findViewById(R.id.project_title_editText);
         okButton = view.findViewById(R.id.project_ok_button);
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -54,23 +58,19 @@ public class NewProjectFragment extends Fragment {
 
                     Project newProject = new Project(newProjectTitle);
                     String projectId = addProjectToDB(newProject);
-                    ProjectFragment projectFragment = ProjectFragment.newInstance(projectId);
 
                     hideKeyboard();
 
-                    getActivity()
-                            .getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.main_container, projectFragment)
-                            .commit();
-
+                    createdProjectHandler.onNewProjectCreated(projectId);
                 }
 
             }
         });
     }
 
-    private String addProjectToDB(Project project){
+
+
+    private String addProjectToDB(Project project) {
         DatabaseReference projectsRef = FirebaseDatabase.getInstance()
                 .getReference().child("Projects");
 
@@ -80,7 +80,7 @@ public class NewProjectFragment extends Fragment {
         return projectId;
     }
 
-    private  void hideKeyboard(){
+    private void hideKeyboard() {
         View keyboardView = getActivity().getCurrentFocus();
         if (keyboardView != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -92,7 +92,9 @@ public class NewProjectFragment extends Fragment {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public static NewProjectFragment newInstance() {
-       return new NewProjectFragment();
+    public static NewProjectFragment newInstance(CreatedProjectHandler handler) {
+        NewProjectFragment fragment = new NewProjectFragment();
+        fragment.createdProjectHandler = handler;
+        return fragment;
     }
 }

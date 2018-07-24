@@ -57,16 +57,9 @@ public class NewTaskFragment extends Fragment {
                     Task task = new Task(newTaskTitle, newTaskComment, projectId);
                     addTaskToDB(task);
 
-                    ProjectFragment projectFragment = ProjectFragment.newInstance(projectId);
+                    getActivity().getSupportFragmentManager().popBackStack();
 
-                    //hideKeyboard();
-
-                    getActivity()
-                            .getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.main_container, projectFragment)
-                            .commit();
-
+                    MainActivity.setAppBarTitle(projectId);
                 }
 
             }

@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">ZebraTime</string>
     <string name="title_project">Title</string>
-    <string name="create_project">Create Project</string>
+    <string name="create_project">Create project</string>
     <string name="enter_title">Enter title</string>
     <string name="enter_comment">Enter comment</string>
     <string name="ok_button">Ok</string>
     <string name="details_label">Detailed information</string>
     <string name="settings_label">Settings</string>
+
+    <string name="create_task">Create task</string>
 
     <string name="open">Open drawer</string>
     <string name="close">Close drawer</string>

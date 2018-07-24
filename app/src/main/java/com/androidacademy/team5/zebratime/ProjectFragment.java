@@ -33,7 +33,16 @@ public class ProjectFragment extends Fragment {
     private FloatingActionButton fab;
     private String projectId;
     public static final String ARG_PROJECT_ID = "projectId";
+    public static final String ARG_TASK_HANDLER = "taskHandler";
+    private NewTaskHandler newTaskHandler;
 
+    public String getProjectId() {
+        return projectId;
+    }
+
+    interface NewTaskHandler{
+        void onCreateTaskButtonClick(String projectId);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,12 +84,7 @@ public class ProjectFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                NewTaskFragment fragment = NewTaskFragment.newInstance(projectId);
-                getActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_container, fragment)
-                        .commit();
+                newTaskHandler.onCreateTaskButtonClick(projectId);
             }
         });
     }
@@ -123,11 +127,12 @@ public class ProjectFragment extends Fragment {
     }
 
 
-    public static ProjectFragment newInstance(String projectId) {
+    public static ProjectFragment newInstance(String projectId, NewTaskHandler newTaskHandler) {
         ProjectFragment fragment = new ProjectFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PROJECT_ID, projectId);
         fragment.setArguments(args);
+        fragment.newTaskHandler = newTaskHandler;
         return fragment;
     }
 }

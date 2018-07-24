@@ -33,7 +33,7 @@ public class AllProjectsFragment extends Fragment {
     private NewProjectHandler projectHandler;
 
     interface NewProjectHandler {
-        void onNewProjectCreated();
+        void onCreateProjectButtonClick();
     }
 
     @Nullable
@@ -62,7 +62,7 @@ public class AllProjectsFragment extends Fragment {
         createProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                projectHandler.onNewProjectCreated();
+                projectHandler.onCreateProjectButtonClick();
             }
         });
     }
