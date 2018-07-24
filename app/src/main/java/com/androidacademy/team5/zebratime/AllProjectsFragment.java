@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 public class AllProjectsFragment extends Fragment {
 
-    private static final int VERTICAL_ITEM_SPACE = 20;
     private Button createProjectButton;
     private RecyclerView recyclerView;
     private ProjectsAdapter adapter;
@@ -82,9 +81,6 @@ public class AllProjectsFragment extends Fragment {
     private void initRecyclerView() {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new ItemDecorator(VERTICAL_ITEM_SPACE));
-        recyclerView.addItemDecoration(
-                new ItemDevider(getActivity(), R.drawable.divider));
         adapter = new ProjectsAdapter(onClickHandler);
         recyclerView.setAdapter(adapter);
     }
