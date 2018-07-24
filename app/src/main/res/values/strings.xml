@@ -10,6 +10,8 @@
 
     <string name="create_task">Create task</string>
 
+    <string name="timer">Timer</string>
+
     <string name="open">Open drawer</string>
     <string name="close">Close drawer</string>
 

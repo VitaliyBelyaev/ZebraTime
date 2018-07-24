@@ -7,12 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidacademy.team5.zebratime.domain.Session;
 import com.androidacademy.team5.zebratime.domain.Task;
@@ -36,12 +38,14 @@ public class TimerActivity extends AppCompatActivity
     private Button actionButton;
     private TextView taskTitleTextView;
     private TextView taskDurationTextView;
+    private Toolbar toolbar;
     private Task task;
     private Timer timer;
     private Button endTaskButton;
     private long workTime;
     private long shortBreakTime;
     private long longBreakTime;
+
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference tasksRef = database.getReference("Tasks");
@@ -86,7 +90,8 @@ public class TimerActivity extends AppCompatActivity
                 .registerOnSharedPreferenceChangeListener(this);
 
         synchronizePreferredTimes();
-
+        toolbar = findViewById(R.id.timer_toolbar);
+        setSupportActionBar(toolbar);
         timeTextView = findViewById(R.id.tv_time);
         actionButton = findViewById(R.id.action_button);
         taskTitleTextView = findViewById(R.id.tv_timer_task_title);
@@ -223,6 +228,11 @@ public class TimerActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        showToast("Press END TASK to exit");
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.work_time_key))) {
             String workTime = sharedPreferences.getString(key, "25");
@@ -287,6 +297,10 @@ public class TimerActivity extends AppCompatActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         workTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.work_time_key), "25"));
         shortBreakTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.short_rest_key), "5"));
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 

@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference sessionsRef;
     private static DatabaseReference projectsRef;
 
+    private String projectId;
     private Fragment selectedFragment;
     private ProjectFragment projectFragment;
     private NewProjectFragment newProjectFragment;
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setLastProject() {
-        Log.i("FB", "in getLastProjectId");
         sessionsRef.orderByChild("startDate")
                 .addListenerForSingleValueEvent(createSessionsListener());
     }
@@ -109,30 +109,34 @@ public class MainActivity extends AppCompatActivity
                     sessions.add(snapshot.getValue(Session.class));
                 }
 
-                String taskId = sessions.get(sessions.size() - 1).getIdTask();
 
-                tasksRef.child(taskId)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Task task = dataSnapshot.getValue(Task.class);
-                                String projectId = task.getProjectId();
-                                projectFragment = ProjectFragment.newInstance(projectId, MainActivity.this);
+                if (sessions.size() > 0) {
+                    String taskId = sessions.get(sessions.size() - 1).getIdTask();
 
-                                getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .add(R.id.main_container, projectFragment)
-                                        .commit();
-                                selectedFragment = projectFragment;
+                    tasksRef.child(taskId)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Task task = dataSnapshot.getValue(Task.class);
+                                    projectId = task.getProjectId();
+                                    projectFragment = ProjectFragment.newInstance(projectId, MainActivity.this);
 
-                                setAppBarTitle(projectId);
-                            }
+                                    getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .add(R.id.main_container, projectFragment)
+                                            .commit();
+                                    selectedFragment = projectFragment;
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    setAppBarTitle(projectId);
 
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                }
             }
 
             @Override
@@ -200,7 +204,7 @@ public class MainActivity extends AppCompatActivity
             drawerLayout.openDrawer(Gravity.START);
             getSupportFragmentManager().popBackStack();
             setAppBarTitle(projectFragment.getProjectId());
-        }else if(selectedFragment.equals(newTaskFragment)){
+        } else if (selectedFragment.equals(newTaskFragment)) {
             getSupportFragmentManager().popBackStack();
             setAppBarTitle(projectFragment.getProjectId());
         } else {

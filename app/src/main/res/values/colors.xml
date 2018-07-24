@@ -6,6 +6,8 @@
     <color name="colorAccent">#009688</color>
     <color name="leftDrawerText">#ffffff</color>
 
+    <color name="black">#000000</color>
+
 </resources>
 
 
