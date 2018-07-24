@@ -1,10 +1,13 @@
 package com.androidacademy.team5.zebratime;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements ProjectsAdapter.ProjectOnClickHandler,
         TasksAdapter.TaskOnClickHandler {
+
+    private ActionBarDrawerToggle toggle;
 
     private DrawerLayout drawerLayout;
     public static final String PROJECT_ID = "projectId";
@@ -40,6 +45,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawer_layout);
 
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.addDrawerListener(toggle);
+
         database = FirebaseDatabase.getInstance();
         tasksRef = database.getReference("Tasks");
         sessionsRef = database.getReference("Sessions");
@@ -54,6 +66,17 @@ public class MainActivity extends AppCompatActivity
         setLastProject();
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        toggle.onConfigurationChanged(newConfig);
+    }
 
     private void setLastProject() {
         Log.i("FB", "in getLastProjectId");

@@ -8,6 +8,9 @@
     <string name="details_label">Detailed information</string>
     <string name="settings_label">Settings</string>
 
+    <string name="open">Open drawer</string>
+    <string name="close">Close drawer</string>
+
     <!--Menus-->
     <string name="open_in_browser">Open in browser</string>
     <string name="open_settings">Settings</string>
