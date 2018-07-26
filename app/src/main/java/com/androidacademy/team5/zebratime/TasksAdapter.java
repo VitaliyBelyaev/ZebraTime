@@ -1,5 +1,6 @@
 package com.androidacademy.team5.zebratime;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,7 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH> {
     private List<Task> tasks;
     private String projectId;
     private TaskOnClickHandler onClickHandler;
+    private Context context;
 
     public interface TaskOnClickHandler {
         void onTaskClick(String taskId, String projectId);
@@ -35,9 +36,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH> {
         notifyDataSetChanged();
     }
 
-    public TasksAdapter(TaskOnClickHandler onClickHandler, String projectId) {
+    public TasksAdapter(TaskOnClickHandler onClickHandler, String projectId, Context context) {
         this.onClickHandler = onClickHandler;
         this.projectId = projectId;
+        this.context = context;
     }
 
     @NonNull
@@ -125,7 +127,19 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskVH> {
     }
 
     private String formatTime(long time){
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH'h' mm'm'");
-        return timeFormat.format(time - 3*60*60*1000);
+        long m;
+        long h = 0;
+
+        m = Math.round(time / (60 * 1000));
+        if (m > 60) {
+            h = Math.round(m / 60);
+            m = m - h * 60;
+        }
+
+        return String.valueOf(h) +
+                context.getString(R.string.hours) +
+                " " +
+                String.valueOf(m) +
+                context.getString(R.string.minutes);
     }
 }

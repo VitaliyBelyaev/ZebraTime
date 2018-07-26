@@ -72,7 +72,7 @@ public class ProjectFragment extends Fragment {
 
         DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Tasks");
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TasksAdapter(onClickHandler, projectId);
+        adapter = new TasksAdapter(onClickHandler, projectId, getContext());
         recyclerView.setAdapter(adapter);
 
         tasksRef.orderByChild("projectId")

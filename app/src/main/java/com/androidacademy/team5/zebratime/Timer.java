@@ -75,8 +75,6 @@ public class Timer {
     }
 
 
-
-
     void start(long workTimeInMillis) {
         if (state == STOP) {
             prevState = getState();

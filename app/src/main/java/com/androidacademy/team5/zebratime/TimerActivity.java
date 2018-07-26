@@ -60,20 +60,20 @@ public class TimerActivity extends AppCompatActivity
 
             switch (timer.getState()) {
                 case STOP:
-                    actionButton.setText("Start");
+                    actionButton.setText(getString(R.string.start));
                     timeTextView.setText(formatTime(workTime));
                     break;
                 case WORK:
-                    actionButton.setText("Stop");
+                    actionButton.setText(getString(R.string.stop));
                     long passedTime = System.currentTimeMillis() - timer.getStartTime();
                     timeTextView.setText(formatTime(workTime - passedTime));
                     break;
                 case OVERWORK:
-                    actionButton.setText("Take break");
+                    actionButton.setText(getString(R.string.take_break));
                     timeTextView.setText(formatTime(shortBreakTime));
                     break;
                 case PAUSE:
-                    actionButton.setText("START");
+                    actionButton.setText(getString(R.string.start));
                     long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
                     timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
                     break;
@@ -99,7 +99,6 @@ public class TimerActivity extends AppCompatActivity
         endTaskButton = findViewById(R.id.end_task_button);
 
         timer = getApp().timer;
-
 
 
         if (timer.getTask() == null) {
@@ -134,10 +133,8 @@ public class TimerActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent serviceIntent = new Intent(getBaseContext(), TimerService.class);
-                serviceIntent.putExtra(TIMER_SERVICE_ACTION, "Stop");
+                serviceIntent.setAction(Constants.ACTION.END_TASK_ACTION);
                 startService(serviceIntent);
-                timer.stop();
-                timer.setTask(null);
                 Intent activityIntent = new Intent(getBaseContext(), MainActivity.class);
                 startActivity(activityIntent);
                 finish();
@@ -151,7 +148,7 @@ public class TimerActivity extends AppCompatActivity
                 switch (timer.getState()) {
                     case STOP:
                         Intent i = new Intent(getBaseContext(), TimerService.class);
-                        i.putExtra(TIMER_SERVICE_ACTION, "Start");
+                        i.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                         startService(i);
                         timer.start(workTime);
                         break;
@@ -273,6 +270,7 @@ public class TimerActivity extends AppCompatActivity
                     duration = duration + session.getDuration();
                 }
 
+                Log.i("DURATION", "Total dur in millis: " + duration);
                 taskDurationTextView.setText(formatDurationTime(duration));
             }
 
@@ -290,8 +288,20 @@ public class TimerActivity extends AppCompatActivity
     }
 
     private String formatDurationTime(long time) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh'h' mm'm'", Locale.getDefault());
-        return timeFormat.format(time);
+        long m;
+        long h = 0;
+
+        m = Math.round(time / (60 * 1000));
+        if (m > 60) {
+            h = Math.round(m / 60);
+            m = m - h * 60;
+        }
+
+        return String.valueOf(h) +
+                getString(R.string.hours) +
+                " " +
+                String.valueOf(m) +
+                getString(R.string.minutes);
     }
 
 

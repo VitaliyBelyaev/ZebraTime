@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
@@ -21,10 +20,12 @@ import com.androidacademy.team5.zebratime.domain.Task;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import static com.androidacademy.team5.zebratime.Constants.ACTION.ACTION_BUTTON_ACTION;
+import static com.androidacademy.team5.zebratime.Constants.ACTION.END_TASK_ACTION;
+import static com.androidacademy.team5.zebratime.Constants.ACTION.STARTFOREGROUND_ACTION;
 import static com.androidacademy.team5.zebratime.MainActivity.PROJECT_ID;
 import static com.androidacademy.team5.zebratime.MainActivity.TASK_ID;
 import static com.androidacademy.team5.zebratime.Timer.State.WORK;
-import static com.androidacademy.team5.zebratime.TimerActivity.TIMER_SERVICE_ACTION;
 
 public class TimerService extends Service {
 
@@ -38,6 +39,7 @@ public class TimerService extends Service {
     public static final String WITH_SOUND = "withSound";
     public static final int TIMER_NOTIFICATION_ID = 6312;
     public static final String NOTIFICATION_AB_CLICK = "actionButtonClick";
+    public static final String NOTIFICATION_END_CLICK = "endButtonClick";
     private static final String CHANNEL_ID = "timer_channel";
     public Timer timer;
 
@@ -89,43 +91,39 @@ public class TimerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getAction() != null) {
 
-        if (intent.hasExtra(TIMER_SERVICE_ACTION)) {
-            String serviceAction = intent.getExtras().getString(TIMER_SERVICE_ACTION);
-            synchronizePreferredTimes();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (serviceAction.equals("Start")) {
-                updateNotification(formatTime(workTime), timer.getTask().getTitle(), WITHOUT_SOUND);
-            } else {
-                Log.i(LOG_TAG, "Received Stop Foreground Intent");
-                stopForeground(true);
-                notificationManager.cancel(TIMER_NOTIFICATION_ID);
-                stopSelf();
-            }
-        } else if (intent.hasExtra(NOTIFICATION_AB_CLICK)
-                && intent.getBooleanExtra(NOTIFICATION_AB_CLICK, false)) {
-
-            switch (timer.getState()) {
-                case STOP:
-                    timer.start(workTime);
+            switch (intent.getAction()) {
+                case STARTFOREGROUND_ACTION:
+                    synchronizePreferredTimes();
+                    updateNotification(formatTime(workTime), timer.getTask().getTitle(), WITHOUT_SOUND);
                     break;
-                case WORK:
-                    timer.stop();
+                case END_TASK_ACTION:
+                    Log.i(LOG_TAG, "Received Stop Foreground Intent");
+                    endButtonAction();
                     break;
-                case OVERWORK:
-                    timer.startBreak(shortBreakTime);
-                    break;
-                case PAUSE:
-                    timer.stopBreak();
-                    timer.start(workTime);
-                    break;
+                case ACTION_BUTTON_ACTION:
+                    Log.i("SERVICE", "In A button Handler");
+                    switch (timer.getState()) {
+                        case STOP:
+                            timer.start(workTime);
+                            break;
+                        case WORK:
+                            timer.stop();
+                            break;
+                        case OVERWORK:
+                            timer.startBreak(shortBreakTime);
+                            break;
+                        case PAUSE:
+                            timer.stopBreak();
+                            timer.start(workTime);
+                            break;
+                    }
             }
         }
         return START_NOT_STICKY;
@@ -156,6 +154,7 @@ public class TimerService extends Service {
 
         createNotificationChannel();
 
+        //Intent to open TimerActivity on notification tap
         Intent resultIntent = new Intent(this, TimerActivity.class);
         Task task = timer.getTask();
         resultIntent.putExtra(PROJECT_ID, task.getProjectId());
@@ -164,18 +163,19 @@ public class TimerService extends Service {
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //Intent to perform end button click
+        Intent endButtonIntent = new Intent(this, TimerService.class);
+        endButtonIntent.setAction(END_TASK_ACTION);
+        PendingIntent endButtonPendingIntent =
+                PendingIntent.getService(this, 0, endButtonIntent, 0);
+
+        //Intent to perform timer control action when button in notification is clicked
         Intent actionButtonIntent = new Intent(this, TimerService.class);
-        actionButtonIntent.putExtra(NOTIFICATION_AB_CLICK, true);
+        actionButtonIntent.setAction(ACTION_BUTTON_ACTION);
         PendingIntent aBPendingIntent =
                 PendingIntent.getService(this, 0, actionButtonIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(time)
-                .setContentText(message)
-                .setOngoing(true)
-                .setContentIntent(resultPendingIntent)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setShowWhen(false);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
 
         switch (timer.getState()) {
             case STOP:
@@ -210,10 +210,24 @@ public class TimerService extends Service {
                 break;
         }
 
+        builder.setContentTitle(time)
+                .setContentText(message)
+                //.setOngoing(true)
+                .setContentIntent(resultPendingIntent)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setShowWhen(false)
+                .addAction(R.drawable.ic_stat_access_time, getString(R.string.end), endButtonPendingIntent);
+
         Notification notification = builder.build();
         startForeground(TIMER_NOTIFICATION_ID, notification);
     }
 
+    private void endButtonAction() {
+        timer.stop();
+        timer.setTask(null);
+        stopForeground(true);
+        stopSelf();
+    }
 
     private void synchronizePreferredTimes() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
