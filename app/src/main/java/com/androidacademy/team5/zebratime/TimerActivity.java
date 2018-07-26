@@ -51,8 +51,6 @@ public class TimerActivity extends AppCompatActivity
     private DatabaseReference tasksRef = database.getReference("Tasks");
     private DatabaseReference sessionsRef = database.getReference("Sessions");
 
-    public static final String TIMER_SERVICE_ACTION = "timerServiceAction";
-
 
     private Timer.TimerListener timerListener = new Timer.TimerListener() {
         @Override
@@ -91,6 +89,7 @@ public class TimerActivity extends AppCompatActivity
 
         synchronizePreferredTimes();
         toolbar = findViewById(R.id.timer_toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
         timeTextView = findViewById(R.id.tv_time);
         actionButton = findViewById(R.id.action_button);
@@ -296,7 +295,6 @@ public class TimerActivity extends AppCompatActivity
             h = Math.round(m / 60);
             m = m - h * 60;
         }
-
         return String.valueOf(h) +
                 getString(R.string.hours) +
                 " " +

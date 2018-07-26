@@ -212,9 +212,9 @@ public class TimerService extends Service {
 
         builder.setContentTitle(time)
                 .setContentText(message)
-                //.setOngoing(true)
+                .setOngoing(true)
                 .setContentIntent(resultPendingIntent)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setShowWhen(false)
                 .addAction(R.drawable.ic_stat_access_time, getString(R.string.end), endButtonPendingIntent);
 
