@@ -1,23 +1,24 @@
 <resources>
     <string name="app_name">ZebraTime</string>
-    <string name="title_project">Title</string>
+
+    <!--App bar titles-->
+    <string name="timer">Timer</string>
+    <string name="create_task">Create task</string>
     <string name="create_project">Create project</string>
+
+    <string name="settings_label">Settings</string>
+
     <string name="enter_title">Enter title</string>
     <string name="enter_comment">Enter comment</string>
     <string name="ok_button">Ok</string>
-    <string name="details_label">Detailed information</string>
-    <string name="settings_label">Settings</string>
-
-    <string name="create_task">Create task</string>
-
-    <string name="timer">Timer</string>
 
     <string name="open">Open drawer</string>
     <string name="close">Close drawer</string>
 
-    <!--Menus-->
-    <string name="open_in_browser">Open in browser</string>
-    <string name="open_settings">Settings</string>
+    <!--Action button states-->
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="take_break">Take break</string>
 
     <!--Preferences-->
     <string name="pref_default_work_time" translatable="false">25</string>
@@ -36,8 +37,4 @@
     <string name="long_break_interval_key" translatable="false">longInterval</string>
     <string name="long_break_interval_title">Long break interval</string>
 
-    <!--Details layout-->
-    <string name="dummy_title" translatable="false">Title</string>
-    <string name="dummy_date" translatable="false">Date</string>
-    <string name="dummy_text" translatable="false">Text</string>
     </resources>

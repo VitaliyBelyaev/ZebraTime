@@ -22,8 +22,8 @@
             android:id="@+id/task_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:layout_alignParentTop="true"
+            android:layout_margin="16dp"
             android:orientation="vertical">
 
             <TextView
@@ -63,11 +63,11 @@
             android:id="@+id/tv_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="25:00"
-            android:textSize="90sp"
             android:layout_below="@id/task_container"
-            android:paddingBottom="16dp"/>
+            android:gravity="center"
+            android:paddingBottom="16dp"
+            android:text="25:00"
+            android:textSize="90sp" />
 
         <Button
             android:id="@+id/action_button"
@@ -79,21 +79,16 @@
             android:text="Action button" />
 
 
-            <Button
-                android:id="@+id/end_task_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="10dp"
-                android:text="END Task" />
-
-
-
-
+        <Button
+            android:id="@+id/end_task_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:text="END Task" />
 
     </RelativeLayout>
-
 
 
 </LinearLayout>

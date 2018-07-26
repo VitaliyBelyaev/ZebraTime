@@ -100,26 +100,6 @@ public class TimerActivity extends AppCompatActivity
 
         timer = getApp().timer;
 
-        switch (timer.getState()) {
-            case STOP:
-                actionButton.setText("Start");
-                timeTextView.setText(formatTime(workTime));
-                break;
-            case WORK:
-                actionButton.setText("Stop");
-                long passedTime = System.currentTimeMillis() - timer.getStartTime();
-                timeTextView.setText(formatTime(workTime - passedTime));
-                break;
-            case OVERWORK:
-                actionButton.setText("Take break");
-                timeTextView.setText(formatTime(shortBreakTime));
-                break;
-            case PAUSE:
-                actionButton.setText("START");
-                long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
-                timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
-                break;
-        }
 
 
         if (timer.getTask() == null) {
@@ -195,6 +175,28 @@ public class TimerActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         timer.addListener(timerListener);
+
+        switch (timer.getState()) {
+            case STOP:
+                actionButton.setText("Start");
+                timeTextView.setText(formatTime(workTime));
+                break;
+            case WORK:
+                actionButton.setText("Stop");
+                long passedTime = System.currentTimeMillis() - timer.getStartTime();
+                timeTextView.setText(formatTime(workTime - passedTime));
+                break;
+            case OVERWORK:
+                actionButton.setText("Take break");
+                timeTextView.setText(formatTime(shortBreakTime));
+                break;
+            case PAUSE:
+                actionButton.setText("START");
+                long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
+                timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
+                break;
+        }
+
     }
 
     @Override

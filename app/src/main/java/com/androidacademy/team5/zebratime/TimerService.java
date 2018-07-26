@@ -24,6 +24,7 @@ import java.util.Locale;
 import static com.androidacademy.team5.zebratime.MainActivity.PROJECT_ID;
 import static com.androidacademy.team5.zebratime.MainActivity.TASK_ID;
 import static com.androidacademy.team5.zebratime.Timer.State.WORK;
+import static com.androidacademy.team5.zebratime.TimerActivity.TIMER_SERVICE_ACTION;
 
 public class TimerService extends Service {
 
@@ -36,6 +37,7 @@ public class TimerService extends Service {
     public static final String WITHOUT_SOUND = "withoutSound";
     public static final String WITH_SOUND = "withSound";
     public static final int TIMER_NOTIFICATION_ID = 6312;
+    public static final String NOTIFICATION_AB_CLICK = "actionButtonClick";
     private static final String CHANNEL_ID = "timer_channel";
     public Timer timer;
 
@@ -51,9 +53,9 @@ public class TimerService extends Service {
             String taskTitle = timer.getTask().getTitle();
             switch (timer.getState()) {
                 case STOP:
-                    if(timer.getPrevState() == WORK){
+                    if (timer.getPrevState() == WORK) {
                         updateNotification(formatTime(workTime), taskTitle, WITHOUT_SOUND);
-                    } else{
+                    } else {
                         updateNotification(formatTime(workTime), taskTitle, WITH_SOUND);
                     }
                     break;
@@ -94,18 +96,36 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent != null) {
-            String serviceAction = intent.getExtras().getString("timerServiceAction");
+        if (intent.hasExtra(TIMER_SERVICE_ACTION)) {
+            String serviceAction = intent.getExtras().getString(TIMER_SERVICE_ACTION);
             synchronizePreferredTimes();
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (serviceAction.equals("Start")) {
-                updateNotification(formatTime(workTime), timer.getTask().getTitle(),WITHOUT_SOUND);
+                updateNotification(formatTime(workTime), timer.getTask().getTitle(), WITHOUT_SOUND);
             } else {
                 Log.i(LOG_TAG, "Received Stop Foreground Intent");
                 stopForeground(true);
                 notificationManager.cancel(TIMER_NOTIFICATION_ID);
                 stopSelf();
+            }
+        } else if (intent.hasExtra(NOTIFICATION_AB_CLICK)
+                && intent.getBooleanExtra(NOTIFICATION_AB_CLICK, false)) {
+
+            switch (timer.getState()) {
+                case STOP:
+                    timer.start(workTime);
+                    break;
+                case WORK:
+                    timer.stop();
+                    break;
+                case OVERWORK:
+                    timer.startBreak(shortBreakTime);
+                    break;
+                case PAUSE:
+                    timer.stopBreak();
+                    timer.start(workTime);
+                    break;
             }
         }
         return START_NOT_STICKY;
@@ -144,36 +164,54 @@ public class TimerService extends Service {
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        switch(mode){
+        Intent actionButtonIntent = new Intent(this, TimerService.class);
+        actionButtonIntent.putExtra(NOTIFICATION_AB_CLICK, true);
+        PendingIntent aBPendingIntent =
+                PendingIntent.getService(this, 0, actionButtonIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(time)
+                .setContentText(message)
+                .setOngoing(true)
+                .setContentIntent(resultPendingIntent)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setShowWhen(false);
+
+        switch (timer.getState()) {
+            case STOP:
+                builder.addAction(R.drawable.ic_stat_access_time,
+                        getString(R.string.start),
+                        aBPendingIntent);
+                break;
+            case WORK:
+                builder.addAction(R.drawable.ic_stat_access_time,
+                        getString(R.string.stop),
+                        aBPendingIntent);
+                break;
+            case OVERWORK:
+                builder.addAction(R.drawable.ic_stat_access_time,
+                        getString(R.string.take_break),
+                        aBPendingIntent);
+                break;
+            case PAUSE:
+                builder.addAction(R.drawable.ic_stat_access_time,
+                        getString(R.string.start),
+                        aBPendingIntent);
+                break;
+        }
+
+
+        switch (mode) {
             case WITHOUT_SOUND:
-
-                NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle(time)
-                        .setContentText(message)
-                        .setOngoing(true)
-                        .setContentIntent(resultPendingIntent)
-                        .setSmallIcon(R.drawable.ic_launcher_foreground)
-                        .setShowWhen(false);
-
-                Notification notification1 = builder1.build();
-                startForeground(TIMER_NOTIFICATION_ID, notification1);
                 break;
             case WITH_SOUND:
                 Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-                NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle(time)
-                        .setContentText(message)
-                        .setOngoing(true)
-                        .setContentIntent(resultPendingIntent)
-                        .setSmallIcon(R.drawable.ic_launcher_foreground)
-                        .setShowWhen(false)
-                        .setSound(alarmSound);
-
-                Notification notification2 = builder2.build();
-                startForeground(TIMER_NOTIFICATION_ID, notification2);
+                builder.setSound(alarmSound);
                 break;
         }
+
+        Notification notification = builder.build();
+        startForeground(TIMER_NOTIFICATION_ID, notification);
     }
 
 

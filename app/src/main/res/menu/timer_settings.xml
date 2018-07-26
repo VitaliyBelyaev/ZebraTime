@@ -4,6 +4,6 @@
 
     <item
         android:id="@+id/settings"
-        android:title="@string/open_settings"
+        android:title="@string/settings_label"
         app:showAsAction="never"/>
 </menu>
