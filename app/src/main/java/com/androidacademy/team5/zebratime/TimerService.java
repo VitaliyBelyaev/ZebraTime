@@ -1,10 +1,12 @@
 package com.androidacademy.team5.zebratime;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
@@ -14,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.androidacademy.team5.zebratime.domain.Task;
 
@@ -21,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import static com.androidacademy.team5.zebratime.Constants.ACTION.ACTION_BUTTON_ACTION;
+import static com.androidacademy.team5.zebratime.Constants.ACTION.ALARM_ACTION;
 import static com.androidacademy.team5.zebratime.Constants.ACTION.END_TASK_ACTION;
 import static com.androidacademy.team5.zebratime.Constants.ACTION.STARTFOREGROUND_ACTION;
 import static com.androidacademy.team5.zebratime.MainActivity.PROJECT_ID;
@@ -53,6 +57,7 @@ public class TimerService extends Service {
             synchronizePreferredTimes();
 
             String taskTitle = timer.getTask().getTitle();
+
             switch (timer.getState()) {
                 case STOP:
                     if (timer.getPrevState() == WORK) {
@@ -66,7 +71,7 @@ public class TimerService extends Service {
                     updateNotification(formatTime(workTime - passedTime), taskTitle, WITHOUT_SOUND);
                     break;
                 case OVERWORK:
-                    updateNotification(formatTime(shortBreakTime), taskTitle, WITH_SOUND);
+                    updateNotification(formatTime(shortBreakTime), timer.getTask().getTitle(), WITH_SOUND);
                     break;
                 case PAUSE:
                     long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
@@ -101,7 +106,10 @@ public class TimerService extends Service {
             switch (intent.getAction()) {
                 case STARTFOREGROUND_ACTION:
                     synchronizePreferredTimes();
+                    setAlarm(workTime);
                     updateNotification(formatTime(workTime), timer.getTask().getTitle(), WITHOUT_SOUND);
+                    break;
+                case ALARM_ACTION:
                     break;
                 case END_TASK_ACTION:
                     Log.i(LOG_TAG, "Received Stop Foreground Intent");
@@ -111,6 +119,7 @@ public class TimerService extends Service {
                     Log.i("SERVICE", "In A button Handler");
                     switch (timer.getState()) {
                         case STOP:
+                            setAlarm(workTime);
                             timer.start(workTime);
                             break;
                         case WORK:
@@ -233,6 +242,22 @@ public class TimerService extends Service {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         workTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.work_time_key), "25"));
         shortBreakTime = 60 * 1000 * Long.valueOf(preferences.getString(getString(R.string.short_rest_key), "5"));
+    }
+
+    private void setAlarm(long workTime) {
+
+        long triggerTime = System.currentTimeMillis() + workTime;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(getBaseContext(), TimerService.class);
+        alarmIntent.setAction(ALARM_ACTION);
+        PendingIntent alarmPendingIntent = PendingIntent.getService(getBaseContext(), 0, alarmIntent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, alarmPendingIntent);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, alarmPendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, alarmPendingIntent);
+        }
     }
 
     private App getApp() {
