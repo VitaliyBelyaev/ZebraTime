@@ -2,7 +2,7 @@
     <string name="app_name">ZebraTime</string>
 
     <!--App bar titles-->
-    <string name="timer">Timer</string>
+    <string name="timer">Pomodoro timer</string>
     <string name="create_task">Create task</string>
     <string name="create_project">Create project</string>
 

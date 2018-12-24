@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimary">#171817</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#484848</color>
     <color name="leftDrawerColor">#000000</color>
     <color name="leftDrawerText">#ffffff</color>
 
-    <color name="black">#000000</color>
+    <color name="green">#18ab01</color>
+    <color name="red">#dd2020</color>
     <color name="white">#ffffff</color>
+    <color name="task_back">#f4f4f4</color>
+    <color name="timer_activity_back">#212121</color>
+
+    <color name="primaryColor">#212121</color>
+    <color name="primaryLightColor">#484848</color>
+    <color name="primaryDarkColor">#000000</color>
+    <color name="secondaryColor">#424242</color>
+    <color name="secondaryLightColor">#6d6d6d</color>
+    <color name="secondaryDarkColor">#1b1b1b</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#ffffff</color>
 
 </resources>
 

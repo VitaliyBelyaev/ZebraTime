@@ -56,26 +56,7 @@ public class TimerActivity extends AppCompatActivity
         @Override
         public void onTick(Timer timer) {
 
-            switch (timer.getState()) {
-                case STOP:
-                    actionButton.setText(getString(R.string.start));
-                    timeTextView.setText(formatTime(workTime));
-                    break;
-                case WORK:
-                    actionButton.setText(getString(R.string.stop));
-                    long passedTime = System.currentTimeMillis() - timer.getStartTime();
-                    timeTextView.setText(formatTime(workTime - passedTime));
-                    break;
-                case OVERWORK:
-                    actionButton.setText(getString(R.string.take_break));
-                    timeTextView.setText(formatTime(shortBreakTime));
-                    break;
-                case PAUSE:
-                    actionButton.setText(getString(R.string.start));
-                    long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
-                    timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
-                    break;
-            }
+           updateUI(timer);
         }
     };
 
@@ -144,24 +125,19 @@ public class TimerActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
+                Intent i = new Intent(getBaseContext(), TimerService.class);
+
                 switch (timer.getState()) {
                     case STOP:
-                        Intent i = new Intent(getBaseContext(), TimerService.class);
                         i.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-                        startService(i);
-                        timer.start(workTime);
                         break;
                     case WORK:
-                        timer.stop();
-                        break;
                     case OVERWORK:
-                        timer.startBreak(shortBreakTime);
-                        break;
                     case PAUSE:
-                        timer.stopBreak();
-                        timer.start(workTime);
+                        i.setAction(Constants.ACTION.ACTION_BUTTON_ACTION);
                         break;
                 }
+                startService(i);
 
             }
         });
@@ -172,26 +148,7 @@ public class TimerActivity extends AppCompatActivity
         super.onStart();
         timer.addListener(timerListener);
 
-        switch (timer.getState()) {
-            case STOP:
-                actionButton.setText("Start");
-                timeTextView.setText(formatTime(workTime));
-                break;
-            case WORK:
-                actionButton.setText("Stop");
-                long passedTime = System.currentTimeMillis() - timer.getStartTime();
-                timeTextView.setText(formatTime(workTime - passedTime));
-                break;
-            case OVERWORK:
-                actionButton.setText("Take break");
-                timeTextView.setText(formatTime(shortBreakTime));
-                break;
-            case PAUSE:
-                actionButton.setText("START");
-                long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
-                timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
-                break;
-        }
+        updateUI(timer);
 
     }
 
@@ -279,6 +236,34 @@ public class TimerActivity extends AppCompatActivity
             }
         };
         return sessionsListener;
+    }
+
+    private void updateUI(Timer timer) {
+
+        switch (timer.getState()) {
+            case STOP:
+                actionButton.setBackgroundColor(getResources().getColor(R.color.green));
+                actionButton.setText(getString(R.string.start));
+                timeTextView.setText(formatTime(workTime));
+                break;
+            case WORK:
+                actionButton.setBackgroundColor(getResources().getColor(R.color.red));
+                actionButton.setText(getString(R.string.stop));
+                long passedTime = System.currentTimeMillis() - timer.getStartTime();
+                timeTextView.setText(formatTime(workTime - passedTime));
+                break;
+            case OVERWORK:
+                actionButton.setBackgroundColor(getResources().getColor(R.color.red));
+                actionButton.setText(getString(R.string.take_break));
+                timeTextView.setText(formatTime(shortBreakTime));
+                break;
+            case PAUSE:
+                actionButton.setBackgroundColor(getResources().getColor(R.color.green));
+                actionButton.setText(getString(R.string.start));
+                long passedBreakTime = System.currentTimeMillis() - timer.getEndTime();
+                timeTextView.setText(formatTime(shortBreakTime - passedBreakTime));
+                break;
+        }
     }
 
     private String formatTime(long time) {
